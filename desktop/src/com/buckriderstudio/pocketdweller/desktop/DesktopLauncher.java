@@ -10,6 +10,9 @@ public class DesktopLauncher {
 		packImages();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.width = 1280;
+		config.height = 720;
+		config.forceExit = false;
 		new LwjglApplication(new PocketDweller(), config);
 	}
 
