@@ -9,15 +9,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.buckriderstudio.pocketdweller.Controller;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TransfromComponent;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 
+/**
+ * Wrapper class responsible for displaying every aspect of the game world including the
+ * world, entities and gui.
+ */
 public class WorldScreen extends ScreenAdapter {
 
     private PooledEngine pooledEngine;
     private SpriteBatch spriteBatch;
     private WorldView worldView;
+    private Controller controller;
 
     private World world;
 
@@ -27,6 +33,8 @@ public class WorldScreen extends ScreenAdapter {
         worldView = new WorldView();
 
         world = new World(128, 128);
+
+        controller = new Controller(worldView.getViewport().getCamera());
     }
 
 
@@ -38,9 +46,15 @@ public class WorldScreen extends ScreenAdapter {
 		{
 			pooledEngine.addEntity(dummyEntity());
 		}
+
+        Gdx.input.setInputProcessor(controller.getInputMultiplexer());
     }
 
-    private Entity dummyEntity(){
+	/**
+	 * Method just for tesing
+	 * @return the dummy entity
+	 */
+	private Entity dummyEntity(){
         Entity e = pooledEngine.createEntity();
         TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
         e.add(textureComponent);

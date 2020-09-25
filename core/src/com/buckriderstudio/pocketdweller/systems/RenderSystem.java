@@ -55,10 +55,12 @@ public class RenderSystem extends IteratingSystem {
 		int startY = (int)(worldView.topWorld() / World.TILE_SIZE);
 		int endY = (int)(worldView.bottomWorld() / World.TILE_SIZE);
 
+		System.out.println(startX);
+
     	batch.begin();
 		for (int y = startY; y >= endY; y--)
 		{
-			for (int x = startX; x < endX; x++)
+			for (int x = startX; x <= endX; x++)
 			{
 				if (!world.withinBounds(x, y)) continue;
 				if (world.getCharMap()[x][y] == '#')
