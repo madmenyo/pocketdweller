@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TransfromComponent;
 import com.buckriderstudio.pocketdweller.world.World;
+import com.buckriderstudio.pocketdweller.world.WorldView;
 
 public class RenderSystem extends IteratingSystem {
 
@@ -20,12 +21,15 @@ public class RenderSystem extends IteratingSystem {
     private Array<Entity> renderQueue;
 
     private World world;
+	private WorldView worldView;
     private SpriteBatch batch;
     private TextureAtlas atlas;
 
-    public RenderSystem(World world, SpriteBatch batch) {
+
+    public RenderSystem(World world, SpriteBatch batch, WorldView worldView) {
         super(Family.all(TransfromComponent.class, TextureComponent.class).get());
         this.world = world;
+        this.worldView = worldView;
         this.batch = batch;
 
         atlas = new TextureAtlas("tilesets/dungeon.atlas");
@@ -46,11 +50,17 @@ public class RenderSystem extends IteratingSystem {
     	renderQueue.clear();
     	super.update(deltaTime);
 
+    	int startX = (int)(worldView.leftWorld() / World.TILE_SIZE);
+		int endX = (int)(worldView.rightWorld() / World.TILE_SIZE);
+		int startY = (int)(worldView.topWorld() / World.TILE_SIZE);
+		int endY = (int)(worldView.bottomWorld() / World.TILE_SIZE);
+
     	batch.begin();
-		for (int y = world.getHeight() - 1; y >= 0; y--)
+		for (int y = startY; y >= endY; y--)
 		{
-			for (int x = 0; x < world.getWidth(); x++)
+			for (int x = startX; x < endX; x++)
 			{
+				if (!world.withinBounds(x, y)) continue;
 				if (world.getCharMap()[x][y] == '#')
 				{
 					batch.draw(atlas.findRegion("wall"), x * World.TILE_SIZE, y * World.TILE_SIZE,

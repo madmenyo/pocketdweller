@@ -17,14 +17,14 @@ public class WorldScreen extends ScreenAdapter {
 
     private PooledEngine pooledEngine;
     private SpriteBatch spriteBatch;
-    private Viewport viewport;
+    private WorldView worldView;
 
     private World world;
 
     public WorldScreen() {
         pooledEngine = new PooledEngine();
         spriteBatch = new SpriteBatch();
-        viewport = new ScreenViewport();
+        worldView = new WorldView();
 
         world = new World(128, 128);
     }
@@ -32,7 +32,7 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        pooledEngine.addSystem(new RenderSystem(world, spriteBatch));
+        pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView));
 
         for (int i = 0; i < 200; i++)
 		{
@@ -56,14 +56,15 @@ public class WorldScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        spriteBatch.setProjectionMatrix(worldView.getViewport().getCamera().combined);
         pooledEngine.update(delta);
 
     }
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        worldView.getViewport().update(width, height);
+		System.out.println(worldView.topWorld());
     }
 
 }
