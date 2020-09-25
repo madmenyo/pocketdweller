@@ -14,7 +14,10 @@ public class TransfromComponent implements Component {
 
     public Coord tilePosition = Coord.get(0, 0);
 
-    public Vector2 worldPosition = new Vector2();
+	/**
+	 * The position in world coordinates, a higher Z means it overlaps other entities.
+	 */
+	public Vector3 worldPosition = new Vector3();
     public Vector2 Scale = new Vector2();
     public float rotation = 0;
 }

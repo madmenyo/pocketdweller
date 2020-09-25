@@ -15,12 +15,10 @@ import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 public class WorldScreen extends ScreenAdapter {
 
     private PooledEngine pooledEngine;
-    private Engine engine;
     private Viewport viewport;
 
     public WorldScreen() {
         pooledEngine = new PooledEngine();
-        engine = new Engine();
         viewport = new ScreenViewport();
     }
 
@@ -28,16 +26,11 @@ public class WorldScreen extends ScreenAdapter {
     @Override
     public void show() {
         pooledEngine.addSystem(new RenderSystem());
-        engine.addSystem(new RenderSystem());
 
-        pooledEngine.addEntity(dummyEntity());
-        pooledEngine.addEntity(dummyEntity());
-        pooledEngine.addEntity(dummyEntity());
-
-        engine.addEntity(dummyEntity());
-        engine.addEntity(dummyEntity());
-        engine.addEntity(dummyEntity());
-
+        for (int i = 0; i < 200; i++)
+		{
+			pooledEngine.addEntity(dummyEntity());
+		}
     }
 
     private Entity dummyEntity(){
@@ -56,7 +49,8 @@ public class WorldScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        engine.update(delta);
+        pooledEngine.update(delta);
+
     }
 
     @Override
