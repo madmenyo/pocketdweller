@@ -1,11 +1,16 @@
 package com.buckriderstudio.pocketdweller.world;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.buckriderstudio.pocketdweller.components.TextureComponent;
+import com.buckriderstudio.pocketdweller.components.TransfromComponent;
+import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 
 public class WorldScreen extends ScreenAdapter {
 
@@ -20,7 +25,22 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+        pooledEngine.addSystem(new RenderSystem());
 
+        pooledEngine.addEntity(dummyEntity());
+        pooledEngine.addEntity(dummyEntity());
+        pooledEngine.addEntity(dummyEntity());
+    }
+
+    private Entity dummyEntity(){
+        Entity e = pooledEngine.createEntity();
+        TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
+        e.add(textureComponent);
+
+        TransfromComponent transfromComponent = pooledEngine.createComponent(TransfromComponent.class);
+        e.add(transfromComponent);
+
+        return e;
     }
 
     @Override
