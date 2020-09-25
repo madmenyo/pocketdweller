@@ -5,6 +5,9 @@ import java.util.HashMap;
 import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
 
+/**
+ * This class holds all currently loaded world/map data. It is kept outside the ECS because a whole map with each tile a seperate static entity makes no sense.
+ */
 public class World {
     public static final int TILE_SIZE = 32;
 
@@ -35,17 +38,34 @@ public class World {
         generateMap();
     }
 
+    /**
+     * Generates a basic map using the width and height
+     */
     private void generateMap() {
         DungeonGenerator dungeonGenerator = new DungeonGenerator(width, height);
         charMap = dungeonGenerator.generate();
         costMap = DungeonUtility.generateCostMap(charMap, new HashMap<Character, Double>(), 1);
+
+
     }
 
+    /**
+     * Checks if tile blocks movement
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean blocksMovement(int x, int y){
         if (!withinBounds(x, y)) return false;
         return (charMap[x][y] == '#');
     }
 
+    /**
+     * Checks if coordinate is within map bounds
+     * @param x
+     * @param y
+     * @return
+     */
     public boolean withinBounds(int x, int y){
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
