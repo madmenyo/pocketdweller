@@ -14,8 +14,11 @@ public class RenderSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-
+        System.out.println("Processing entity");
     }
 
-
+    @Override
+    public void update(float deltaTime) {
+        System.out.println("Updating system");
+    }
 }
