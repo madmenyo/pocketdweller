@@ -87,6 +87,6 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        
+        api 'com.squidpony:squidlib-util:3.0.1'
     }
 }
