@@ -55,8 +55,6 @@ public class RenderSystem extends IteratingSystem {
 		int startY = (int)(worldView.topWorld() / World.TILE_SIZE);
 		int endY = (int)(worldView.bottomWorld() / World.TILE_SIZE);
 
-		System.out.println(startX);
-
     	batch.begin();
 		for (int y = startY; y >= endY; y--)
 		{
@@ -75,6 +73,13 @@ public class RenderSystem extends IteratingSystem {
 				}
 			}
 		}
+
+		for (Entity entity : renderQueue){
+			TextureComponent textureComponent = textureMapper.get(entity);
+			TransfromComponent transfromComponent = transformMapper.get(entity);
+			batch.draw(textureComponent.region, transfromComponent.worldPosition.x, transfromComponent.worldPosition.y, World.TILE_SIZE, World.TILE_SIZE);
+		}
+
 		batch.end();
 
     }
