@@ -14,6 +14,7 @@ import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
+import com.buckriderstudio.pocketdweller.systems.MoveSystem;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
 
@@ -38,7 +39,6 @@ public class WorldScreen extends ScreenAdapter {
         pooledEngine = new PooledEngine();
         spriteBatch = new SpriteBatch();
         worldView = new WorldView();
-		controller = new Controller(worldView.getViewport().getCamera(), player);
 
         world = new World(128, 128);
 
@@ -48,24 +48,34 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+    	// Add systems
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView));
         TimeSystem timeSystem = new TimeSystem();
         pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
         pooledEngine.addSystem(timeSystem);
 
+        pooledEngine.addSystem(new MoveSystem());
 
-        pooledEngine.addEntity(dummyPlayer());
+        // Add dummy player and controller
+        Entity player = dummyPlayer();
+		controller = new Controller(worldView.getViewport().getCamera(), player, world);
+        pooledEngine.addEntity(player);
 
-
+        // Add dummy entities
         for (int i = 0; i < 200; i++)
 		{
 			pooledEngine.addEntity(dummyEntity());
 		}
 
+        // Set input
         Gdx.input.setInputProcessor(controller.getInputMultiplexer());
     }
 
-    private Entity dummyPlayer() {
+	/**
+	 * Creates a dummy player for testing
+	 * @return dummy player controlled entity
+	 */
+	private Entity dummyPlayer() {
         Entity player = pooledEngine.createEntity();
 
         TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);

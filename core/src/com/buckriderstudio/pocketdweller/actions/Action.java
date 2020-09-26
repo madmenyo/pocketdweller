@@ -1,5 +1,6 @@
 package com.buckriderstudio.pocketdweller.actions;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 
 public abstract class Action {
@@ -9,5 +10,5 @@ public abstract class Action {
         this.time = time;
     }
 
-    public abstract void perform(Entity entity);
+    public abstract void perform(Entity entity, Engine engine);
 }

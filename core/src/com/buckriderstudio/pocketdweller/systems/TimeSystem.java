@@ -61,16 +61,20 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
-			// If player has action perform it
 			ActionComponent actionComponent = actionMapper.get(queue.peek());
 			TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
 			PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
+
+			// If player has action perform it
 			if (queue.peek().getComponent(ActionComponent.class) != null)
 			{
 				// Pull out of queue
 				Entity player = queue.poll();
 				//perform
 				System.out.println("Performing action: " + actionComponent.action);
+				actionComponent.action.perform(player, getEngine());
+
+				player.remove(ActionComponent.class);
 
 				timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
 				// push into queue
