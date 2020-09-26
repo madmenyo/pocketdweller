@@ -54,7 +54,7 @@ public class World {
      * @return
      */
     public boolean blocksMovement(int x, int y){
-        if (!withinBounds(x, y)) return false;
+        if (!withinBounds(x, y)) return true;
         return (charMap[x][y] == '#');
     }
 

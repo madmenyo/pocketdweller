@@ -7,14 +7,14 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.buckriderstudio.pocketdweller.components.ActionComponent;
+import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.JulianFields;
-import java.time.temporal.TemporalField;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -25,17 +25,16 @@ import java.util.PriorityQueue;
 
 public class TimeSystem extends EntitySystem implements EntityListener
 {
-	private LocalDateTime dateTime;
-
-
-
+	public static ZonedDateTime CURRENT_TIME = ZonedDateTime.of(LocalDateTime.of(2021, Month.APRIL, 1, 8, 0, 0), ZoneId.systemDefault());
 	private ImmutableArray<Entity> entities;
 
 	private ComponentMapper<TimeUnitComponent> timeMapper = ComponentMapper.getFor(TimeUnitComponent.class);
+	private ComponentMapper<ActionComponent> actionMapper = ComponentMapper.getFor(ActionComponent.class);
+	private ComponentMapper<BehaviorComponent> behaviorMapper = ComponentMapper.getFor(BehaviorComponent.class);
 
-	private Comparator<Entity> timeComparator = Comparator.comparingInt(e -> {
+	private Comparator<Entity> timeComparator = Comparator.comparingLong(e -> {
 		TimeUnitComponent time = timeMapper.get(e);
-		return time == null ? 0 : time.timeUnit;
+		return time == null ? 0 : time.time.toInstant().toEpochMilli();
 	});
 
 	private PriorityQueue<Entity> queue = new PriorityQueue<>(timeComparator);
@@ -44,10 +43,10 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 	public TimeSystem()
 	{
-		dateTime = LocalDateTime.of(2021, Month.APRIL, 1, 8, 0, 0);
+		// Get first entity in line
 
-		//LocalDate.of(2021, Month.APRIL, 1);
-
+		// If player controlled
+		//if (queue.peek().getComponent(PlayerComponent))
 
 	}
 
@@ -66,8 +65,8 @@ public class TimeSystem extends EntitySystem implements EntityListener
 	@Override
 	public void entityAdded(Entity entity)
 	{
-		System.out.println("Entity added");
-		System.out.println("time: " + timeMapper.get(entity).timeUnit);
+		//System.out.println("Entity added");
+		//System.out.println("time: " + timeMapper.get(entity).timeUnit);
 		queue.add(entity);
 	}
 

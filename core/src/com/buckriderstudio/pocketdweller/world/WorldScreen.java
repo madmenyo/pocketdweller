@@ -2,6 +2,7 @@ package com.buckriderstudio.pocketdweller.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.buckriderstudio.pocketdweller.Controller;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
+import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransfromComponent;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
@@ -49,7 +51,15 @@ public class WorldScreen extends ScreenAdapter {
     @Override
     public void show() {
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView));
-        pooledEngine.addSystem(new TimeSystem());
+        TimeSystem timeSystem = new TimeSystem();
+        pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
+        pooledEngine.addSystem(timeSystem);
+
+
+        Entity e = pooledEngine.createEntity();
+		TimeUnitComponent timeUnitComponent = pooledEngine.createComponent(TimeUnitComponent.class);
+		e.add(timeUnitComponent);
+		pooledEngine.addEntity(e);
 
 
 
@@ -72,11 +82,10 @@ public class WorldScreen extends ScreenAdapter {
         e.add(textureComponent);
 
         TransfromComponent transfromComponent = pooledEngine.createComponent(TransfromComponent.class);
-		Coord coord;
-        while (true)
+		Coord coord = Coord.get(-1, -1);
+        while (world.blocksMovement(coord.x, coord.y))
 		{
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
-			if (!world.blocksMovement(coord.x, coord.y)) break;
 		}
 		transfromComponent.tilePosition = coord;
 		transfromComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
@@ -98,7 +107,6 @@ public class WorldScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         worldView.getViewport().update(width, height);
-		System.out.println(worldView.topWorld());
     }
 
 }
