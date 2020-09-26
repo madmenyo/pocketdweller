@@ -7,15 +7,14 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
-import com.buckriderstudio.pocketdweller.components.TransfromComponent;
+import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.world.World;
 import com.buckriderstudio.pocketdweller.world.WorldView;
 
 public class RenderSystem extends IteratingSystem {
 
-    private ComponentMapper<TransfromComponent> transformMapper;
+    private ComponentMapper<TransformComponent> transformMapper;
     private ComponentMapper<TextureComponent> textureMapper;
 
     private Array<Entity> renderQueue;
@@ -27,14 +26,14 @@ public class RenderSystem extends IteratingSystem {
 
 
     public RenderSystem(World world, SpriteBatch batch, WorldView worldView) {
-        super(Family.all(TransfromComponent.class, TextureComponent.class).get());
+        super(Family.all(TransformComponent.class, TextureComponent.class).get());
         this.world = world;
         this.worldView = worldView;
         this.batch = batch;
 
         atlas = new TextureAtlas("tilesets/dungeon.atlas");
 
-        transformMapper = ComponentMapper.getFor(TransfromComponent.class);
+        transformMapper = ComponentMapper.getFor(TransformComponent.class);
         textureMapper = ComponentMapper.getFor(TextureComponent.class);
 
         renderQueue = new Array<>();
@@ -76,8 +75,8 @@ public class RenderSystem extends IteratingSystem {
 
 		for (Entity entity : renderQueue){
 			TextureComponent textureComponent = textureMapper.get(entity);
-			TransfromComponent transfromComponent = transformMapper.get(entity);
-			batch.draw(textureComponent.region, transfromComponent.worldPosition.x, transfromComponent.worldPosition.y, World.TILE_SIZE, World.TILE_SIZE);
+			TransformComponent transformComponent = transformMapper.get(entity);
+			batch.draw(textureComponent.region, transformComponent.worldPosition.x, transformComponent.worldPosition.y, World.TILE_SIZE, World.TILE_SIZE);
 		}
 
 		batch.end();

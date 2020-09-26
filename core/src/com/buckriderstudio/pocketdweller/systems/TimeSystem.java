@@ -9,12 +9,14 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
+import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -39,14 +41,9 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 	private PriorityQueue<Entity> queue = new PriorityQueue<>(timeComparator);
 
-	private Entity currentEntity;
 
 	public TimeSystem()
 	{
-		// Get first entity in line
-
-		// If player controlled
-		//if (queue.peek().getComponent(PlayerComponent))
 
 	}
 
@@ -59,6 +56,37 @@ public class TimeSystem extends EntitySystem implements EntityListener
 	@Override
 	public void update(float deltaTime)
 	{
+
+		// Get first entity in line
+
+		// If player controlled
+		if (queue.peek().getComponent(PlayerComponent.class) != null){
+			// If player has action perform it
+			ActionComponent actionComponent = actionMapper.get(queue.peek());
+			TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
+			PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
+			if (queue.peek().getComponent(ActionComponent.class) != null)
+			{
+				// Pull out of queue
+				Entity player = queue.poll();
+				//perform
+				System.out.println("Performing action: " + actionComponent.action);
+
+				timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
+				// push into queue
+				queue.add(player);
+				playerComponent.playerTurn = false;
+			}
+			else
+			{
+				System.out.println("Player need to decide what to do");
+				playerComponent.playerTurn = true;
+				return;
+			}
+		}
+	}
+
+	private void act(){
 
 	}
 

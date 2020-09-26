@@ -1,6 +1,5 @@
 package com.buckriderstudio.pocketdweller.world;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
@@ -10,12 +9,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.buckriderstudio.pocketdweller.Controller;
+import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
-import com.buckriderstudio.pocketdweller.components.TransfromComponent;
+import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
 
@@ -56,11 +54,7 @@ public class WorldScreen extends ScreenAdapter {
         pooledEngine.addSystem(timeSystem);
 
 
-        Entity e = pooledEngine.createEntity();
-		TimeUnitComponent timeUnitComponent = pooledEngine.createComponent(TimeUnitComponent.class);
-		e.add(timeUnitComponent);
-		pooledEngine.addEntity(e);
-
+        pooledEngine.addEntity(dummyPlayer());
 
 
         for (int i = 0; i < 200; i++)
@@ -71,7 +65,30 @@ public class WorldScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(controller.getInputMultiplexer());
     }
 
-	/**
+    private Entity dummyPlayer() {
+        Entity player = pooledEngine.createEntity();
+
+        TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);
+        Coord coord = Coord.get(0, 0);
+        while (world.blocksMovement(coord.x, coord.y)){
+            coord = coord.add(Coord.get(1, 1));
+            System.out.println(coord);
+        }
+        transformComponent.tilePosition = coord;
+        transformComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
+        player.add(transformComponent);
+
+        TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
+        textureComponent.region = atlas.findRegion("knight_idle_anim_f0");
+        player.add(textureComponent);
+
+        player.add(new PlayerComponent());
+        player.add(new TimeUnitComponent());
+
+        return player;
+    }
+
+    /**
 	 * Method just for tesing
 	 * @return the dummy entity
 	 */
@@ -81,15 +98,15 @@ public class WorldScreen extends ScreenAdapter {
         textureComponent.region = atlas.findRegion("slime_idle_anim_f0");
         e.add(textureComponent);
 
-        TransfromComponent transfromComponent = pooledEngine.createComponent(TransfromComponent.class);
+        TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);
 		Coord coord = Coord.get(-1, -1);
         while (world.blocksMovement(coord.x, coord.y))
 		{
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
 		}
-		transfromComponent.tilePosition = coord;
-		transfromComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
-        e.add(transfromComponent);
+		transformComponent.tilePosition = coord;
+		transformComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
+        e.add(transformComponent);
 
         return e;
     }

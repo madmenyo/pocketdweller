@@ -10,7 +10,7 @@ import squidpony.squidmath.Coord;
  * This component represents the position on in the world.
  * Without this component the entity does not exists directly in the world but perhaps in inventory.
  */
-public class TransfromComponent implements Component {
+public class TransformComponent implements Component {
 
     public Coord tilePosition = Coord.get(0, 0);
 
