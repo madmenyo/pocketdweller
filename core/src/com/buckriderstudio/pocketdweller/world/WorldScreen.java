@@ -38,7 +38,7 @@ public class WorldScreen extends ScreenAdapter {
         pooledEngine = new PooledEngine();
         spriteBatch = new SpriteBatch();
         worldView = new WorldView();
-		controller = new Controller(worldView.getViewport().getCamera());
+		controller = new Controller(worldView.getViewport().getCamera(), player);
 
         world = new World(128, 128);
 

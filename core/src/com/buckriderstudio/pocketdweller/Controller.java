@@ -1,5 +1,8 @@
 package com.buckriderstudio.pocketdweller;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -22,6 +25,8 @@ public class Controller
 		return inputMultiplexer;
 	}
 
+	private Entity player;
+
 	private GestureDetector.GestureAdapter gestureAdapter = new GestureDetector.GestureAdapter(){
 		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY)
@@ -32,9 +37,20 @@ public class Controller
 		}
 	};
 
-	public Controller(Camera camera)
+	private InputAdapter inputAdapter = new InputAdapter(){
+		@Override
+		public boolean keyDown(int keycode) {
+			keycode == Input.Keys.W{
+				player.
+			}
+			return false;
+		}
+	};
+
+	public Controller(Camera camera, Entity player)
 	{
 		this.camera = camera;
+		this.player = player;
 		inputMultiplexer =new InputMultiplexer(new GestureDetector(gestureAdapter));
 	}
 }
