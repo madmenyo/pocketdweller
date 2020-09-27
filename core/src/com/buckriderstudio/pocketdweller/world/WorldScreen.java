@@ -10,10 +10,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.buckriderstudio.pocketdweller.Controller;
+import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
+import com.buckriderstudio.pocketdweller.systems.FovSystem;
 import com.buckriderstudio.pocketdweller.systems.MoveSystem;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
@@ -48,18 +50,22 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+		// Add dummy player and controller
+		Entity player = dummyPlayer();
+		controller = new Controller(worldView.getViewport().getCamera(), player, world);
+
     	// Add systems
-        pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView));
+		pooledEngine.addSystem(new FovSystem(world));
+        pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView, player));
         TimeSystem timeSystem = new TimeSystem();
         pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
         pooledEngine.addSystem(timeSystem);
 
         pooledEngine.addSystem(new MoveSystem());
 
-        // Add dummy player and controller
-        Entity player = dummyPlayer();
-		controller = new Controller(worldView.getViewport().getCamera(), player, world);
-        pooledEngine.addEntity(player);
+        // Add player to engine
+		pooledEngine.addEntity(player);
+
 
         // Add dummy entities
         for (int i = 0; i < 200; i++)
@@ -94,9 +100,25 @@ public class WorldScreen extends ScreenAdapter {
 
         player.add(new PlayerComponent());
         player.add(new TimeUnitComponent());
+        player.add(new FovComponent());
 
         return player;
     }
+
+    private Entity mobEntity(){
+		Entity e = pooledEngine.createEntity();
+		TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
+		textureComponent.region = atlas.findRegion("slime_idle_anim_f0");
+		e.add(textureComponent);
+
+		TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);
+		Coord coord = Coord.get(-1, -1);
+		while (world.blocksMovement(coord.x, coord.y))
+		{
+			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
+		}
+		return e;
+	}
 
     /**
 	 * Method just for tesing
@@ -123,7 +145,7 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(.02f, .026f, .042f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         spriteBatch.setProjectionMatrix(worldView.getViewport().getCamera().combined);

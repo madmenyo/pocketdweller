@@ -9,7 +9,7 @@ import squidpony.squidgrid.mapping.DungeonUtility;
  * This class holds all currently loaded world/map data. It is kept outside the ECS because a whole map with each tile a seperate static entity makes no sense.
  */
 public class World {
-    public static final int TILE_SIZE = 16;
+    public static final int TILE_SIZE = 64;
 
     private int width, height;
     public int getWidth() {
@@ -31,7 +31,13 @@ public class World {
         return costMap;
     }
 
-    public World(int width, int height) {
+    private boolean[][] discovered;
+	public boolean[][] getDiscovered()
+	{
+		return discovered;
+	}
+
+	public World(int width, int height) {
         this.width = width;
         this.height = height;
 
@@ -45,6 +51,9 @@ public class World {
         DungeonGenerator dungeonGenerator = new DungeonGenerator(width, height);
         charMap = dungeonGenerator.generate();
         costMap = DungeonUtility.generateCostMap(charMap, new HashMap<Character, Double>(), 1);
+
+        discovered = new boolean[width][height];
+
     }
 
     /**

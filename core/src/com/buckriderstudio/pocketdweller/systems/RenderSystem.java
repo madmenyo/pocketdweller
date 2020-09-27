@@ -7,6 +7,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.world.World;
@@ -24,14 +25,18 @@ public class RenderSystem extends IteratingSystem {
     private SpriteBatch batch;
     private TextureAtlas atlas;
 
+    private Entity player;
+    private FovComponent fovComponent;
 
-    public RenderSystem(World world, SpriteBatch batch, WorldView worldView) {
+    public RenderSystem(World world, SpriteBatch batch, WorldView worldView, Entity player) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
         this.world = world;
         this.worldView = worldView;
         this.batch = batch;
+		this.player = player;
+		fovComponent = player.getComponent(FovComponent.class);
 
-        atlas = new TextureAtlas("tilesets/dungeon.atlas");
+		atlas = new TextureAtlas("tilesets/dungeon.atlas");
 
         transformMapper = ComponentMapper.getFor(TransformComponent.class);
         textureMapper = ComponentMapper.getFor(TextureComponent.class);
@@ -49,6 +54,7 @@ public class RenderSystem extends IteratingSystem {
     	renderQueue.clear();
     	super.update(deltaTime);
 
+
     	int startX = (int)(worldView.leftWorld() / World.TILE_SIZE);
 		int endX = (int)(worldView.rightWorld() / World.TILE_SIZE);
 		int startY = (int)(worldView.topWorld() / World.TILE_SIZE);
@@ -59,7 +65,28 @@ public class RenderSystem extends IteratingSystem {
 		{
 			for (int x = startX; x <= endX; x++)
 			{
+				// Check if position is within bounds and visible by player
 				if (!world.withinBounds(x, y)) continue;
+				if (fovComponent.fovMap == null){
+					throw new NullPointerException("FovComponent of player cannot be null in RenderSystem");
+				}
+
+				// If tile currently not visible
+				if (fovComponent.fovMap[x][y] == 0){
+					// If it is not discovered draw nothing and continue
+					if (!world.getDiscovered()[x][y]) continue;
+					// else set blue hue fog of war view
+					batch.setColor(.15f, 0.2f, .3f,1);
+				}
+				else
+				{
+					// If it is visible set discovery to true
+					world.getDiscovered()[x][y] = true;
+					// and set color based on lightmap from fov
+					batch.setColor((float) fovComponent.fovMap[x][y], (float) fovComponent.fovMap[x][y], (float) fovComponent.fovMap[x][y], 1);
+				}
+
+				// Draw based on type
 				if (world.getCharMap()[x][y] == '#')
 				{
 					batch.draw(atlas.findRegion("wall"), x * World.TILE_SIZE, y * World.TILE_SIZE,
@@ -73,9 +100,21 @@ public class RenderSystem extends IteratingSystem {
 			}
 		}
 
+		// Draw entities
 		for (Entity entity : renderQueue){
-			TextureComponent textureComponent = textureMapper.get(entity);
 			TransformComponent transformComponent = transformMapper.get(entity);
+			// continue loop if entity position is not visible
+			if (fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y] == 0) continue;
+
+			TextureComponent textureComponent = textureMapper.get(entity);
+
+			// Set color based on light map at entity position
+			batch.setColor(
+					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					1);
+			// Draw entity
 			batch.draw(textureComponent.region, transformComponent.worldPosition.x, transformComponent.worldPosition.y, World.TILE_SIZE, World.TILE_SIZE);
 		}
 

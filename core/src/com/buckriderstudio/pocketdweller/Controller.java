@@ -45,7 +45,6 @@ public class Controller
 	}
 
 
-
 	private GestureDetector.GestureAdapter gestureAdapter = new GestureDetector.GestureAdapter(){
 		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY)
@@ -76,6 +75,12 @@ public class Controller
 					break;
 			}
 			return false;
+		}
+
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer, int button)
+		{
+			return super.touchDown(screenX, screenY, pointer, button);
 		}
 	};
 

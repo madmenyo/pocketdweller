@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
@@ -61,38 +62,42 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
-			ActionComponent actionComponent = actionMapper.get(queue.peek());
-			TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
-			PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
-
-			// If player has action perform it
-			if (queue.peek().getComponent(ActionComponent.class) != null)
-			{
-				// Pull out of queue
-				Entity player = queue.poll();
-				//perform
-				System.out.println("Performing action: " + actionComponent.action);
-				actionComponent.action.perform(player, getEngine());
-
-				player.remove(ActionComponent.class);
-
-				timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
-				// push into queue
-				queue.add(player);
-				playerComponent.playerTurn = false;
-			}
-			else
-			{
-				System.out.println("Player need to decide what to do");
-				playerComponent.playerTurn = true;
-				return;
-			}
+			processPlayerTurn();
+		} else {
+			Gdx.app.log("TimeSystem","Monster needs acting");
 		}
 	}
 
-	private void act(){
+	private void processPlayerTurn()
+	{
+		ActionComponent actionComponent = actionMapper.get(queue.peek());
+		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
+		PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
 
+		// If player has action perform it
+		if (queue.peek().getComponent(ActionComponent.class) != null)
+		{
+			// Pull out of queue
+			Entity player = queue.poll();
+			//perform
+			//System.out.println("Performing action: " + actionComponent.action);
+			actionComponent.action.perform(player, getEngine());
+
+			player.remove(ActionComponent.class);
+
+			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
+			// push into queue
+			queue.add(player);
+			playerComponent.playerTurn = false;
+		}
+		else
+		{
+			//System.out.println("Player need to decide what to do");
+			playerComponent.playerTurn = true;
+			return;
+		}
 	}
+
 
 	@Override
 	public void entityAdded(Entity entity)
