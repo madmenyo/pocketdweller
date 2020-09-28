@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.buckriderstudio.pocketdweller.Controller;
+import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
@@ -65,10 +66,11 @@ public class WorldScreen extends ScreenAdapter {
 
         // Add player to engine
 		pooledEngine.addEntity(player);
+		pooledEngine.addEntity(mobEntity());
 
 
         // Add dummy entities
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < 0; i++)
 		{
 			pooledEngine.addEntity(dummyEntity());
 		}
@@ -117,6 +119,11 @@ public class WorldScreen extends ScreenAdapter {
 		{
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
 		}
+		e.add(transformComponent);
+
+		e.add(new TimeUnitComponent());
+		e.add(new BehaviorComponent());
+
 		return e;
 	}
 

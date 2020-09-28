@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.buckriderstudio.pocketdweller.actions.MoveAction;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
+import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.world.World;
 
@@ -33,6 +34,7 @@ public class Controller
 
 	private Entity player;
 	private TransformComponent transfromComponent;
+	private PlayerComponent playerComponent;
 
 	private World world;
 
@@ -42,6 +44,8 @@ public class Controller
 		this.player = player;
 		this.world = world;
 		inputMultiplexer =new InputMultiplexer(new GestureDetector(gestureAdapter), inputAdapter);
+		transfromComponent = player.getComponent(TransformComponent.class);
+		playerComponent = player.getComponent(PlayerComponent.class);
 	}
 
 
@@ -85,7 +89,7 @@ public class Controller
 	};
 
 	private void move(Coord translation){
-		transfromComponent = player.getComponent(TransformComponent.class);
+		if (!playerComponent.playerTurn) return;
 		Coord destination = transfromComponent.tilePosition.add(translation);
 		if (world.blocksMovement(destination.x, destination.y)) return;
 
