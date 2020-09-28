@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.buckriderstudio.pocketdweller.actions.WaitAction;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
@@ -64,7 +65,18 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 			processPlayerTurn();
 		} else {
-			Gdx.app.log("TimeSystem","Monster needs acting");
+			ActionComponent actionComponent = actionMapper.get(queue.peek());
+			TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
+
+			CURRENT_TIME = timeUnitComponent.time;
+
+			// Set custom time to simulate waiting
+			timeUnitComponent.time = timeUnitComponent.time.plus(5000, ChronoUnit.MILLIS);
+			//Re insert
+			Entity e = queue.poll();
+
+			queue.add(e);
+			Gdx.app.log("TimeSystem","Monster waited 500ms. Next action at: " + timeUnitComponent.time);
 		}
 	}
 
@@ -73,6 +85,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		ActionComponent actionComponent = actionMapper.get(queue.peek());
 		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
 		PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
+		CURRENT_TIME = timeUnitComponent.time;
 
 		// If player has action perform it
 		if (queue.peek().getComponent(ActionComponent.class) != null)
@@ -80,15 +93,17 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			// Pull out of queue
 			Entity player = queue.poll();
 			//perform
-			//System.out.println("Performing action: " + actionComponent.action);
+			System.out.println("Performing action: " + actionComponent.action);
 			actionComponent.action.perform(player, getEngine());
 
 			player.remove(ActionComponent.class);
 
-			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
+			timeUnitComponent.time = timeUnitComponent.time.plus(2000, ChronoUnit.MILLIS);
 			// push into queue
 			queue.add(player);
 			playerComponent.playerTurn = false;
+
+			Gdx.app.log("TimeSystem","Player acted " + actionComponent.timeInMiliSeconds + "ms. Next action at: " + timeUnitComponent.time);
 		}
 		else
 		{

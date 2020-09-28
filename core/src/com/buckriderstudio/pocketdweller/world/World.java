@@ -1,5 +1,7 @@
 package com.buckriderstudio.pocketdweller.world;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import java.util.HashMap;
 
 import squidpony.squidgrid.mapping.DungeonGenerator;
@@ -9,7 +11,7 @@ import squidpony.squidgrid.mapping.DungeonUtility;
  * This class holds all currently loaded world/map data. It is kept outside the ECS because a whole map with each tile a seperate static entity makes no sense.
  */
 public class World {
-    public static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 8;
 
     private int width, height;
     public int getWidth() {
@@ -41,13 +43,31 @@ public class World {
         this.width = width;
         this.height = height;
 
-        generateMap();
+        //generateDungeon();
+        generateLandscape(15);
+    }
+
+    private void generateLandscape(int treePercentage) {
+	    charMap = new char[width][height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (MathUtils.random(100) < treePercentage){
+                    charMap[x][y] = '#';
+                }else {
+                    charMap[x][y] = '.';
+                }
+            }
+        }
+
+        costMap = DungeonUtility.generateCostMap(charMap, new HashMap<Character, Double>(), 1);
+
+        discovered = new boolean[width][height];
     }
 
     /**
      * Generates a basic map using the width and height
      */
-    private void generateMap() {
+    private void generateDungeon() {
         DungeonGenerator dungeonGenerator = new DungeonGenerator(width, height);
         charMap = dungeonGenerator.generate();
         costMap = DungeonUtility.generateCostMap(charMap, new HashMap<Character, Double>(), 1);
