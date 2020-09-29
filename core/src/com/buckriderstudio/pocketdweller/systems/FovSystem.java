@@ -22,7 +22,13 @@ public class FovSystem extends IteratingSystem
 	private double[][] resistanceMap;
 	private FOV fov;
 
+	private int counter = 0;
+	private long totalTime = 0;
+	private float averageTime = 0;
 
+	public float getAverageTime() {
+		return averageTime;
+	}
 
 	private ComponentMapper<FovComponent> fovMapper = ComponentMapper.getFor(FovComponent.class);
 	private ComponentMapper<TransformComponent> tranformMapper = ComponentMapper.getFor(TransformComponent.class);
@@ -55,6 +61,21 @@ public class FovSystem extends IteratingSystem
 		Gdx.app.log("FovSystem", "FOV processed: " + String.format("%.2f", (double)(System.nanoTime() - time) / 1000000f) + "ms.");
 		// update fov position
 		fovComponent.previous = transformComponent.tilePosition;
+	}
 
+	@Override
+	public void update(float deltaTime) {
+		long time = System.nanoTime();
+		super.update(deltaTime);
+
+		// If debug
+		counter++;
+		totalTime += (System.nanoTime() - time);
+		if (counter == 100){
+			// Convert nano to mili, convert to 2 decimal and average over counter
+			averageTime = Math.round((totalTime / 1000000) * 100 / counter) / 100f;
+			counter = 0;
+			totalTime = 0;
+		}
 	}
 }

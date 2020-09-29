@@ -65,19 +65,26 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 			processPlayerTurn();
 		} else {
-			ActionComponent actionComponent = actionMapper.get(queue.peek());
-			TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
-
-			CURRENT_TIME = timeUnitComponent.time;
-
-			// Set custom time to simulate waiting
-			timeUnitComponent.time = timeUnitComponent.time.plus(5000, ChronoUnit.MILLIS);
-			//Re insert
-			Entity e = queue.poll();
-
-			queue.add(e);
-			Gdx.app.log("TimeSystem","Monster waited 500ms. Next action at: " + timeUnitComponent.time);
+			processOther();
 		}
+	}
+
+	private void processOther() {
+		/*
+		ActionComponent actionComponent = actionMapper.get(queue.peek());
+		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
+
+		CURRENT_TIME = timeUnitComponent.time;
+
+		// Set custom time to simulate waiting
+		timeUnitComponent.time = timeUnitComponent.time.plus(5000, ChronoUnit.MILLIS);
+		//Re insert
+		Entity e = queue.poll();
+
+		queue.add(e);
+		Gdx.app.log("TimeSystem","Monster waited 500ms. Next action at: " + timeUnitComponent.time);
+
+		 */
 	}
 
 	private void processPlayerTurn()

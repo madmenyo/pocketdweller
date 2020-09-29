@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.buckriderstudio.pocketdweller.Controller;
+import com.buckriderstudio.pocketdweller.DebugTable;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
@@ -38,12 +41,16 @@ public class WorldScreen extends ScreenAdapter {
 
     private TextureAtlas atlas;
 
+    private Stage stage;
+
     public WorldScreen() {
         pooledEngine = new PooledEngine();
         spriteBatch = new SpriteBatch();
         worldView = new WorldView();
 
         world = new World(128, 128);
+
+        stage = new Stage(new ExtendViewport(1280, 720));
 
         atlas = new TextureAtlas("tilesets/dungeon.atlas");
     }
@@ -56,7 +63,8 @@ public class WorldScreen extends ScreenAdapter {
 		controller = new Controller(worldView.getViewport().getCamera(), player, world);
 
     	// Add systems
-		pooledEngine.addSystem(new FovSystem(world));
+        FovSystem fovSystem = new FovSystem(world);
+		pooledEngine.addSystem(fovSystem);
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView, player));
         TimeSystem timeSystem = new TimeSystem();
         pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
@@ -77,6 +85,8 @@ public class WorldScreen extends ScreenAdapter {
 
         // Set input
         Gdx.input.setInputProcessor(controller.getInputMultiplexer());
+
+        stage.addActor(new DebugTable(fovSystem));
     }
 
 	/**
@@ -152,11 +162,15 @@ public class WorldScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+	    stage.act();
+
         Gdx.gl.glClearColor(.02f, .026f, .042f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         spriteBatch.setProjectionMatrix(worldView.getViewport().getCamera().combined);
         pooledEngine.update(delta);
+
+        stage.draw();
 
     }
 
