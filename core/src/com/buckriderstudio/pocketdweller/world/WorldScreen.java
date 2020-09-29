@@ -12,7 +12,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.buckriderstudio.pocketdweller.Controller;
-import com.buckriderstudio.pocketdweller.DebugTable;
+import com.buckriderstudio.pocketdweller.behavior.Behaviors;
+import com.buckriderstudio.pocketdweller.entities.Mob;
+import com.buckriderstudio.pocketdweller.utility.DebugTable;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
@@ -67,20 +69,23 @@ public class WorldScreen extends ScreenAdapter {
 		pooledEngine.addSystem(fovSystem);
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView, player));
         TimeSystem timeSystem = new TimeSystem();
-        pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
         pooledEngine.addSystem(timeSystem);
 
         pooledEngine.addSystem(new MoveSystem());
 
+        // Add listeners
+		pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), timeSystem);
+		pooledEngine.addEntityListener(Family.all(TimeUnitComponent.class).get(), world);
+
         // Add player to engine
 		pooledEngine.addEntity(player);
-		pooledEngine.addEntity(mobEntity());
 
 
-        // Add dummy entities
-        for (int i = 0; i < 0; i++)
+		Behaviors behaviors = new Behaviors();
+        // Add some mobs
+        for (int i = 0; i < 1; i++)
 		{
-			pooledEngine.addEntity(dummyEntity());
+			pooledEngine.addEntity(mobEntity(behaviors));
 		}
 
         // Set input
@@ -117,48 +122,16 @@ public class WorldScreen extends ScreenAdapter {
         return player;
     }
 
-    private Entity mobEntity(){
-		Entity e = pooledEngine.createEntity();
-		TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
-		textureComponent.region = atlas.findRegion("slime_idle_anim_f0");
-		e.add(textureComponent);
-
-		TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);
+    private Entity mobEntity(Behaviors behaviors){
 		Coord coord = Coord.get(-1, -1);
 		while (world.blocksMovement(coord.x, coord.y))
 		{
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
 		}
-		e.add(transformComponent);
 
-		e.add(new TimeUnitComponent());
-		e.add(new BehaviorComponent());
-
-		return e;
+		return new Mob(coord, world, atlas.findRegion("goblin_idle_anim_f0"), pooledEngine, behaviors);
 	}
 
-    /**
-	 * Method just for tesing
-	 * @return the dummy entity
-	 */
-	private Entity dummyEntity(){
-        Entity e = pooledEngine.createEntity();
-        TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
-        textureComponent.region = atlas.findRegion("slime_idle_anim_f0");
-        e.add(textureComponent);
-
-        TransformComponent transformComponent = pooledEngine.createComponent(TransformComponent.class);
-		Coord coord = Coord.get(-1, -1);
-        while (world.blocksMovement(coord.x, coord.y))
-		{
-			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
-		}
-		transformComponent.tilePosition = coord;
-		transformComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
-        e.add(transformComponent);
-
-        return e;
-    }
 
     @Override
     public void render(float delta) {

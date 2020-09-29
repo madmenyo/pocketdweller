@@ -11,6 +11,6 @@ import com.buckriderstudio.pocketdweller.actions.Action;
 public class ActionComponent implements Component
 {
 	//public String action = "Some action";
-	public Action action;
+	public Action action = null;
 	public int timeInMiliSeconds;
 }

@@ -9,6 +9,8 @@ import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.world.World;
 
+import java.util.Arrays;
+
 import squidpony.squidgrid.FOV;
 
 /**
@@ -56,11 +58,21 @@ public class FovSystem extends IteratingSystem
 
 		long time = System.nanoTime();
 		// Calculate fov
-		fovComponent.fovMap = fov.calculateFOV(resistanceMap, transformComponent.tilePosition.x, transformComponent.tilePosition.y, 40);
+		// TODO a copy of the lightmap for each entity is overkill.
+		// TODO either a boolean map or better calculate fov on demand since it seems cheap
+		fovComponent.fovMap = new double[world.getWidth()][world.getHeight()];
+		arrayCopy(fov.calculateFOV(resistanceMap, transformComponent.tilePosition.x, transformComponent.tilePosition.y, 40),
+				fovComponent.fovMap);
 
 		Gdx.app.log("FovSystem", "FOV processed: " + String.format("%.2f", (double)(System.nanoTime() - time) / 1000000f) + "ms.");
 		// update fov position
 		fovComponent.previous = transformComponent.tilePosition;
+	}
+
+	public static void arrayCopy(double[][] aSource, double[][] aDestination) {
+		for (int i = 0; i < aSource.length; i++) {
+			System.arraycopy(aSource[i], 0, aDestination[i], 0, aSource[i].length);
+		}
 	}
 
 	@Override

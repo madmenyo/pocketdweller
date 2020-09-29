@@ -1,11 +1,13 @@
 package com.buckriderstudio.pocketdweller;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector3;
 import com.buckriderstudio.pocketdweller.actions.MoveAction;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
@@ -84,8 +86,13 @@ public class Controller
 		@Override
 		public boolean touchDown(int screenX, int screenY, int pointer, int button)
 		{
-			return super.touchDown(screenX, screenY, pointer, button);
+			Vector3 v3 = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			camera.unproject(v3);
+
+			System.out.println("Tile: " + (int)(v3.x / World.TILE_SIZE) + ", " + (int)(v3.y / World.TILE_SIZE));
+			return false;
 		}
+
 	};
 
 	private void move(Coord translation){

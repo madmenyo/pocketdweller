@@ -1,16 +1,25 @@
 package com.buckriderstudio.pocketdweller.world;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.gdx.math.MathUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
+import squidpony.squidmath.AStarSearch;
+import squidpony.squidmath.Coord;
 
 /**
  * This class holds all currently loaded world/map data. It is kept outside the ECS because a whole map with each tile a seperate static entity makes no sense.
  */
-public class World {
+public class World implements EntityListener
+{
     public static final int TILE_SIZE = 8;
 
     private int width, height;
@@ -39,12 +48,21 @@ public class World {
 		return discovered;
 	}
 
+	private Set<Entity> sentientEntities;
+	public Set<Entity> getSentientEntities()
+	{
+		return sentientEntities;
+	}
+
 	public World(int width, int height) {
         this.width = width;
         this.height = height;
 
         //generateDungeon();
         generateLandscape(15);
+
+        sentientEntities = new HashSet<>();
+
     }
 
     private void generateLandscape(int treePercentage) {
@@ -59,7 +77,7 @@ public class World {
             }
         }
 
-        costMap = DungeonUtility.generateCostMap(charMap, new HashMap<Character, Double>(), 1);
+        costMap = DungeonUtility.generateCostMap(charMap, new HashMap<>(), 1);
 
         discovered = new boolean[width][height];
     }
@@ -75,6 +93,11 @@ public class World {
         discovered = new boolean[width][height];
 
     }
+
+    public List<Coord> findPath(Coord from, Coord too){
+		AStarSearch aStarSearch = new AStarSearch(costMap, AStarSearch.SearchType.EUCLIDEAN);
+		return aStarSearch.path(from, too);
+	}
 
     /**
      * Checks if tile blocks movement
@@ -96,4 +119,16 @@ public class World {
     public boolean withinBounds(int x, int y){
         return (x >= 0 && x < width && y >= 0 && y < height);
     }
+
+	@Override
+	public void entityAdded(Entity entity)
+	{
+		sentientEntities.add(entity);
+	}
+
+	@Override
+	public void entityRemoved(Entity entity)
+	{
+		sentientEntities.remove(entity);
+	}
 }

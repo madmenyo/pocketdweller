@@ -1,4 +1,4 @@
-package com.buckriderstudio.pocketdweller;
+package com.buckriderstudio.pocketdweller.utility;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;

@@ -13,6 +13,7 @@ import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
+import com.buckriderstudio.pocketdweller.utility.Mappers;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -59,17 +60,40 @@ public class TimeSystem extends EntitySystem implements EntityListener
 	public void update(float deltaTime)
 	{
 
-		// Get first entity in line
-
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 			processPlayerTurn();
-		} else {
+		} else { // Must be other
 			processOther();
 		}
 	}
 
 	private void processOther() {
+		// Poll the next entity, this entity should act now
+		Entity entity = queue.poll();
+
+		ActionComponent action = Mappers.Action.get(entity);
+		// If no action let AI pick action
+		while (action.action == null){
+			Gdx.app.log("TimeSystem", "Entity taking behavior step");
+			BehaviorComponent behavior = Mappers.Behavior.get(entity);
+			behavior.behaviorTree.step();
+		}
+
+		// If has action perform it
+		// Currently always true since above loop
+		if (action != null){
+			// Perform
+			action.action.perform(entity, getEngine());
+			// add time
+			TimeUnitComponent time = Mappers.Time.get(entity);
+			time.time = time.time.plus(action.timeInMiliSeconds, ChronoUnit.MILLIS);
+			// reset action
+			action.action = null;
+			// reinsert in queue
+			queue.add(entity);
+		}
+
 		/*
 		ActionComponent actionComponent = actionMapper.get(queue.peek());
 		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());

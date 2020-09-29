@@ -15,10 +15,12 @@ public class FovComponent implements Component, Pool.Poolable
 	//If still on the same
 	public Coord previous = Coord.get(-1, -1);
 	public double[][] fovMap;
+	public float range;
 
 	@Override
 	public void reset()
 	{
 		previous = Coord.get(-1, -1);
+		fovMap = null;
 	}
 }
