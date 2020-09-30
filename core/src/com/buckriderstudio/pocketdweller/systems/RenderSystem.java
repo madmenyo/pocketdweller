@@ -7,9 +7,9 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
-import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
+import com.buckriderstudio.pocketdweller.utility.Mappers;
 import com.buckriderstudio.pocketdweller.world.World;
 import com.buckriderstudio.pocketdweller.world.WorldView;
 
@@ -26,9 +26,8 @@ public class RenderSystem extends IteratingSystem {
     private TextureAtlas atlas;
 
     private Entity player;
-    private FovComponent fovComponent;
 
-    boolean noFog = true;
+    private boolean noFog = true;
 
 
     public RenderSystem(World world, SpriteBatch batch, WorldView worldView, Entity player) {
@@ -37,7 +36,6 @@ public class RenderSystem extends IteratingSystem {
         this.worldView = worldView;
         this.batch = batch;
 		this.player = player;
-		fovComponent = player.getComponent(FovComponent.class);
 
 		atlas = new TextureAtlas("tilesets/dungeon.atlas");
 
@@ -57,6 +55,7 @@ public class RenderSystem extends IteratingSystem {
     	renderQueue.clear();
     	super.update(deltaTime);
 
+    	double[][] lightMap = world.getLightMap(Mappers.Transform.get(player).tilePosition, 40);
 
     	int startX = (int)(worldView.leftWorld() / World.TILE_SIZE);
 		int endX = (int)(worldView.rightWorld() / World.TILE_SIZE);
@@ -70,12 +69,9 @@ public class RenderSystem extends IteratingSystem {
 			{
 				// Check if position is within bounds and visible by player
 				if (!world.withinBounds(x, y)) continue;
-				if (fovComponent.fovMap == null){
-					throw new NullPointerException("FovComponent of player cannot be null in RenderSystem");
-				}
 
 				// If tile currently not visible
-				if (fovComponent.fovMap[x][y] == 0){
+				if (lightMap[x][y] == 0){
 					// If it is not discovered draw nothing and continue
 					if (!world.getDiscovered()[x][y] && !noFog){
 						continue;
@@ -90,7 +86,7 @@ public class RenderSystem extends IteratingSystem {
 					// If it is visible set discovery to true
 					world.getDiscovered()[x][y] = true;
 					// and set color based on lightmap from fov
-					batch.setColor((float) fovComponent.fovMap[x][y], (float) fovComponent.fovMap[x][y], (float) fovComponent.fovMap[x][y], 1);
+					batch.setColor((float) lightMap[x][y], (float) lightMap[x][y], (float) lightMap[x][y], 1);
 				}
 
 				// Draw based on type
@@ -111,15 +107,15 @@ public class RenderSystem extends IteratingSystem {
 		for (Entity entity : renderQueue){
 			TransformComponent transformComponent = transformMapper.get(entity);
 			// continue loop if entity position is not visible
-			if (!noFog && fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y] == 0) continue;
+			if (!noFog && lightMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y] == 0) continue;
 
 			TextureComponent textureComponent = textureMapper.get(entity);
 
 			// Set color based on light map at entity position
 			batch.setColor(
-					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
-					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
-					(float)fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					(float)lightMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					(float)lightMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
+					(float)lightMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y],
 					1);
 			// Draw entity
 			batch.draw(textureComponent.region, transformComponent.worldPosition.x, transformComponent.worldPosition.y, World.TILE_SIZE, World.TILE_SIZE);

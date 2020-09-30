@@ -16,13 +16,10 @@ import com.buckriderstudio.pocketdweller.behavior.Behaviors;
 import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.entities.Mob;
 import com.buckriderstudio.pocketdweller.utility.DebugTable;
-import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
-import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
-import com.buckriderstudio.pocketdweller.systems.FovSystem;
 import com.buckriderstudio.pocketdweller.systems.MoveSystem;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
@@ -66,8 +63,6 @@ public class WorldScreen extends ScreenAdapter {
 		controller = new Controller(worldView.getViewport().getCamera(), player, world);
 
     	// Add systems
-        FovSystem fovSystem = new FovSystem(world);
-		pooledEngine.addSystem(fovSystem);
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView, player));
         TimeSystem timeSystem = new TimeSystem();
         pooledEngine.addSystem(timeSystem);
@@ -83,7 +78,7 @@ public class WorldScreen extends ScreenAdapter {
 
 		// Add some mobs
 		Behaviors behaviors = new Behaviors();
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 60; i++)
 		{
 			String name = "Mob[" + i + "]";
 			pooledEngine.addEntity(mobEntity(name, behaviors));
@@ -92,7 +87,7 @@ public class WorldScreen extends ScreenAdapter {
         // Set input
         Gdx.input.setInputProcessor(controller.getInputMultiplexer());
 
-        stage.addActor(new DebugTable(fovSystem));
+        stage.addActor(new DebugTable());
     }
 
 	/**
@@ -118,7 +113,6 @@ public class WorldScreen extends ScreenAdapter {
 
         player.add(new PlayerComponent());
         player.add(new TimeUnitComponent());
-        player.add(new FovComponent());
 
         InfoComponent infoComponent = pooledEngine.createComponent(InfoComponent.class);
         infoComponent.name = "Player";

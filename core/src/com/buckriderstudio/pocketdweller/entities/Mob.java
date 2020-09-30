@@ -2,7 +2,6 @@ package com.buckriderstudio.pocketdweller.entities;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
@@ -11,15 +10,11 @@ import com.buckriderstudio.pocketdweller.behavior.Behaviors;
 import com.buckriderstudio.pocketdweller.behavior.WanderTask;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
-import com.buckriderstudio.pocketdweller.components.FovComponent;
 import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
-import com.buckriderstudio.pocketdweller.utility.Mappers;
 import com.buckriderstudio.pocketdweller.world.World;
-
-import java.util.Random;
 
 import squidpony.squidmath.AStarSearch;
 import squidpony.squidmath.Coord;
@@ -44,7 +39,6 @@ public class Mob extends Entity
 		add(textureComponent);
 
 		add(engine.createComponent(TimeUnitComponent.class));
-		add(engine.createComponent(FovComponent.class));
 		add(engine.createComponent(ActionComponent.class));
 
 		InfoComponent infoComponent = engine.createComponent(InfoComponent.class);

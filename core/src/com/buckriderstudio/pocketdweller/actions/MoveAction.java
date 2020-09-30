@@ -32,7 +32,6 @@ public class MoveAction extends Action {
 		moveComponent.from.set(transformComponent.worldPosition.x, transformComponent.worldPosition.y);
 		moveComponent.too.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE);
 
-		TransformComponent transformComponent1 = Mappers.Transform.get(entity);
 		transformComponent.tilePosition = coord;
 		entity.add(moveComponent);
     }

@@ -53,7 +53,7 @@ public class MoveSystem extends IteratingSystem
 		// If this is finished remove the move component
 		if (a == 1) {
 			entity.remove(MoveComponent.class);
-			Gdx.app.log("MoveSystem", Mappers.Info.get(entity).name + " : Move finished. " + mc.too + " | " + tc.tilePosition + " | " + tc.worldPosition);
+			//Gdx.app.log("MoveSystem", Mappers.Info.get(entity).name + " : Move finished. " + mc.too + " | " + tc.tilePosition + " | " + tc.worldPosition);
 		}
 
 

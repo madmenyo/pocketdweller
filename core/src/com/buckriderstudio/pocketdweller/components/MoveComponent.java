@@ -16,7 +16,7 @@ public class MoveComponent implements Component, Pool.Poolable
 {
 	public Vector2 from = new Vector2();
 	public Vector2 too = new Vector2();
-	public float animationTime = .9f;
+	public float animationTime = .1f;
 	public float currentTime = 0;
 	public Interpolation interpolation = Interpolation.exp5;
 

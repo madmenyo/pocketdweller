@@ -5,18 +5,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.buckriderstudio.pocketdweller.systems.FovSystem;
 
 public class DebugTable extends Table {
     private Skin skin;
 
-    private FovSystem fovSystem;
 
     private Label fpsLabel;
-    private Label fovSystemTime;
 
-    public DebugTable(FovSystem fovSystem) {
-        this.fovSystem = fovSystem;
+    public DebugTable() {
         skin = new Skin(Gdx.files.internal("uiskin.json"), new TextureAtlas("uiskin.atlas"));
 
         initLabels();
@@ -31,9 +27,6 @@ public class DebugTable extends Table {
         fpsLabel = new Label("", skin);
         add(fpsLabel);
         row();
-        add(new Label("FOV: ", skin));
-        fovSystemTime = new Label("", skin);
-        add(fovSystemTime);
     }
 
 
@@ -42,7 +35,6 @@ public class DebugTable extends Table {
         super.act(delta);
 
         fpsLabel.setText(Gdx.graphics.getFramesPerSecond());
-        fovSystemTime.setText(fovSystem.getAverageTime() + "ms");
 
     }
 }

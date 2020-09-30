@@ -64,7 +64,8 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 			processPlayerTurn();
 		} else { // Must be other
-			processOther();
+			while (queue.peek().getComponent(PlayerComponent.class) == null)
+				processOther();
 		}
 	}
 
@@ -76,7 +77,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		// If no action let AI pick action
 		while (action.action == null){
 
-			Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : taking behavior step");
+			//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : taking behavior step");
 			BehaviorComponent behavior = Mappers.Behavior.get(entity);
 			behavior.behaviorTree.step();
 		}
@@ -91,7 +92,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			// add time
 			TimeUnitComponent time = Mappers.Time.get(entity);
 			time.time = time.time.plus(action.timeInMiliSeconds, ChronoUnit.MILLIS);
-			Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
+			//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
 
 			// reset action
 			action.action = null;
