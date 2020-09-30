@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import squidpony.squidai.DijkstraMap;
+import squidpony.squidgrid.FOV;
+import squidpony.squidgrid.Measurement;
+import squidpony.squidgrid.Radius;
 import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
 import squidpony.squidmath.AStarSearch;
@@ -54,6 +58,13 @@ public class World implements EntityListener
 		return sentientEntities;
 	}
 
+	private AStarSearch aStarSearch;
+
+	private FOV fieldOfView;
+	private double[][] resistanceMap;
+
+	private DijkstraMap dijkstraMap;
+
 	public World(int width, int height) {
         this.width = width;
         this.height = height;
@@ -61,11 +72,26 @@ public class World implements EntityListener
         //generateDungeon();
         generateLandscape(15);
 
-        sentientEntities = new HashSet<>();
 
+		updateMapChange();
+
+		sentientEntities = new HashSet<>();
     }
 
-    private void generateLandscape(int treePercentage) {
+	/**
+	 * Should be run whenever map changes to update path finding, fov, etc
+	 */
+	private void updateMapChange()
+	{
+		aStarSearch = new AStarSearch(costMap, AStarSearch.SearchType.EUCLIDEAN);
+
+		fieldOfView = new FOV(FOV.SHADOW);
+		resistanceMap = FOV.generateResistances(charMap);
+
+		dijkstraMap = new DijkstraMap(charMap, Measurement.EUCLIDEAN);
+	}
+
+	private void generateLandscape(int treePercentage) {
 	    charMap = new char[width][height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -94,9 +120,19 @@ public class World implements EntityListener
 
     }
 
+    /*
     public List<Coord> findPath(Coord from, Coord too){
-		AStarSearch aStarSearch = new AStarSearch(costMap, AStarSearch.SearchType.EUCLIDEAN);
 		return aStarSearch.path(from, too);
+	}*/
+
+	/**
+	 * Generates the light map for the current position and radius
+	 * @param coord
+	 * @param radius
+	 * @return
+	 */
+	public double[][] getLightMap(Coord coord, double radius){
+    	return fieldOfView.calculateFOV(resistanceMap, coord.x, coord.y, radius, Radius.CIRCLE);
 	}
 
     /**

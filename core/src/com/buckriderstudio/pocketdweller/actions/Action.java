@@ -6,7 +6,7 @@ import com.badlogic.ashley.core.Entity;
 public abstract class Action {
     protected int time;
 
-    public Action(int time) {
+	public Action(int time) {
         this.time = time;
     }
 

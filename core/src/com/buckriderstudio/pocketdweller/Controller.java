@@ -53,6 +53,16 @@ public class Controller
 
 	private GestureDetector.GestureAdapter gestureAdapter = new GestureDetector.GestureAdapter(){
 		@Override
+		public boolean tap(float x, float y, int count, int button)
+		{
+			Vector3 v3 = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			camera.unproject(v3);
+
+			System.out.println("Tile: " + (int)(v3.x / World.TILE_SIZE) + ", " + (int)(v3.y / World.TILE_SIZE));
+			return false;
+		}
+
+		@Override
 		public boolean pan(float x, float y, float deltaX, float deltaY)
 		{
 			camera.translate(-deltaX, deltaY, 0);
@@ -82,17 +92,6 @@ public class Controller
 			}
 			return false;
 		}
-
-		@Override
-		public boolean touchDown(int screenX, int screenY, int pointer, int button)
-		{
-			Vector3 v3 = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(v3);
-
-			System.out.println("Tile: " + (int)(v3.x / World.TILE_SIZE) + ", " + (int)(v3.y / World.TILE_SIZE));
-			return false;
-		}
-
 	};
 
 	private void move(Coord translation){
@@ -104,6 +103,7 @@ public class Controller
 
 		ActionComponent actionComponent = new ActionComponent();
 		actionComponent.action = new MoveAction(100, destination);
+		actionComponent.timeInMiliSeconds = 100;
 		player.add(actionComponent);
 	}
 }

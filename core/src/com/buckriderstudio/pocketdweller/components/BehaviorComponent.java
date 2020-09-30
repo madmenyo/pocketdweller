@@ -7,6 +7,7 @@ import com.buckriderstudio.pocketdweller.world.World;
 
 import java.util.List;
 
+import squidpony.squidmath.AStarSearch;
 import squidpony.squidmath.Coord;
 
 /**
@@ -19,4 +20,5 @@ public class BehaviorComponent implements Component
     public BehaviorTree<Entity> behaviorTree;
     public World world;
     public List<Coord> path;
+    public AStarSearch aStarSearch;
 }

@@ -36,7 +36,7 @@ public class WanderTask extends LeafTask<Entity>
 				coord = Coord.get(transform.tilePosition.x + MathUtils.random(-10, 11), transform.tilePosition.y + MathUtils.random(-10, 11));
 			}
 			// Find path
-			behavior.path = behavior.world.findPath(transform.tilePosition, coord);
+			behavior.path = behavior.aStarSearch.path(transform.tilePosition, coord);
 		}
 		// Get stats (or action uses stats to calculate stuff like speed)
 		action.action = new MoveAction(100, behavior.path.remove(0));

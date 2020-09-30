@@ -12,6 +12,7 @@ import com.buckriderstudio.pocketdweller.behavior.WanderTask;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.FovComponent;
+import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
@@ -20,6 +21,7 @@ import com.buckriderstudio.pocketdweller.world.World;
 
 import java.util.Random;
 
+import squidpony.squidmath.AStarSearch;
 import squidpony.squidmath.Coord;
 
 /**
@@ -30,7 +32,7 @@ import squidpony.squidmath.Coord;
 public class Mob extends Entity
 {
 
-	public Mob(Coord spawnTile, World world, TextureRegion region, Engine engine, Behaviors behaviors)
+	public Mob(String name, Coord spawnTile, World world, TextureRegion region, Engine engine, Behaviors behaviors)
 	{
 		TransformComponent transformComponent = engine.createComponent(TransformComponent.class);
 		transformComponent.tilePosition = spawnTile;
@@ -45,9 +47,14 @@ public class Mob extends Entity
 		add(engine.createComponent(FovComponent.class));
 		add(engine.createComponent(ActionComponent.class));
 
+		InfoComponent infoComponent = engine.createComponent(InfoComponent.class);
+		infoComponent.name = name;
+		add(infoComponent);
+
 		BehaviorComponent behaviorComponent = engine.createComponent(BehaviorComponent.class);
 		behaviorComponent.behaviorTree = behaviors.getWanderingBehavior(this);
 		behaviorComponent.world = world;
+		behaviorComponent.aStarSearch = new AStarSearch(world.getCharMap(), AStarSearch.SearchType.EUCLIDEAN);
 		add(behaviorComponent);
 	}
 
@@ -60,6 +67,7 @@ public class Mob extends Entity
 
 		WanderTask wanderTask = new WanderTask();
 		sequence.addChild(wanderTask);
+
 
 		return selector;
 	}

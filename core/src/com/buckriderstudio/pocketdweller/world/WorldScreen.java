@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.buckriderstudio.pocketdweller.Controller;
 import com.buckriderstudio.pocketdweller.behavior.Behaviors;
+import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.entities.Mob;
 import com.buckriderstudio.pocketdweller.utility.DebugTable;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
@@ -80,12 +81,12 @@ public class WorldScreen extends ScreenAdapter {
         // Add player to engine
 		pooledEngine.addEntity(player);
 
-
+		// Add some mobs
 		Behaviors behaviors = new Behaviors();
-        // Add some mobs
         for (int i = 0; i < 1; i++)
 		{
-			pooledEngine.addEntity(mobEntity(behaviors));
+			String name = "Mob[" + i + "]";
+			pooledEngine.addEntity(mobEntity(name, behaviors));
 		}
 
         // Set input
@@ -119,17 +120,21 @@ public class WorldScreen extends ScreenAdapter {
         player.add(new TimeUnitComponent());
         player.add(new FovComponent());
 
+        InfoComponent infoComponent = pooledEngine.createComponent(InfoComponent.class);
+        infoComponent.name = "Player";
+        player.add(infoComponent);
+
         return player;
     }
 
-    private Entity mobEntity(Behaviors behaviors){
+    private Entity mobEntity(String name, Behaviors behaviors){
 		Coord coord = Coord.get(-1, -1);
 		while (world.blocksMovement(coord.x, coord.y))
 		{
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
 		}
 
-		return new Mob(coord, world, atlas.findRegion("goblin_idle_anim_f0"), pooledEngine, behaviors);
+		return new Mob(name, coord, world, atlas.findRegion("goblin_idle_anim_f0"), pooledEngine, behaviors);
 	}
 
 

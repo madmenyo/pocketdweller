@@ -1,6 +1,7 @@
 package com.buckriderstudio.pocketdweller.components;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool;
 import com.buckriderstudio.pocketdweller.actions.Action;
 
 /**
@@ -8,9 +9,15 @@ import com.buckriderstudio.pocketdweller.actions.Action;
  * By Menno Gouw
  */
 
-public class ActionComponent implements Component
+public class ActionComponent implements Component, Pool.Poolable
 {
 	//public String action = "Some action";
 	public Action action = null;
 	public int timeInMiliSeconds;
+
+	@Override
+	public void reset()
+	{
+		action = null;
+	}
 }

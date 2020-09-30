@@ -5,10 +5,12 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.buckriderstudio.pocketdweller.components.MoveComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
+import com.buckriderstudio.pocketdweller.utility.Mappers;
 
 /**
  * PocketDweller [2020]
@@ -49,7 +51,10 @@ public class MoveSystem extends IteratingSystem
 		tc.worldPosition.set(v2, 0);
 
 		// If this is finished remove the move component
-		if (a == 1) entity.remove(MoveComponent.class);
+		if (a == 1) {
+			entity.remove(MoveComponent.class);
+			Gdx.app.log("MoveSystem", Mappers.Info.get(entity).name + " : Move finished. " + mc.too + " | " + tc.tilePosition + " | " + tc.worldPosition);
+		}
 
 
 	}

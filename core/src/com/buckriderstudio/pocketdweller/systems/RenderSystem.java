@@ -28,6 +28,9 @@ public class RenderSystem extends IteratingSystem {
     private Entity player;
     private FovComponent fovComponent;
 
+    boolean noFog = true;
+
+
     public RenderSystem(World world, SpriteBatch batch, WorldView worldView, Entity player) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
         this.world = world;
@@ -74,9 +77,13 @@ public class RenderSystem extends IteratingSystem {
 				// If tile currently not visible
 				if (fovComponent.fovMap[x][y] == 0){
 					// If it is not discovered draw nothing and continue
-					if (!world.getDiscovered()[x][y]) continue;
-					// else set blue hue fog of war view
-					batch.setColor(.15f, 0.2f, .3f,1);
+					if (!world.getDiscovered()[x][y] && !noFog){
+						continue;
+					} else
+					{
+						// else set blue hue fog of war view
+						batch.setColor(.15f, 0.2f, .3f, 1);
+					}
 				}
 				else
 				{
@@ -104,7 +111,7 @@ public class RenderSystem extends IteratingSystem {
 		for (Entity entity : renderQueue){
 			TransformComponent transformComponent = transformMapper.get(entity);
 			// continue loop if entity position is not visible
-			if (fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y] == 0) continue;
+			if (!noFog && fovComponent.fovMap[transformComponent.tilePosition.x][transformComponent.tilePosition.y] == 0) continue;
 
 			TextureComponent textureComponent = textureMapper.get(entity);
 

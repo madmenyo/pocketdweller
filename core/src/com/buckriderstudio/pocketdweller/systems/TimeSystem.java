@@ -75,10 +75,13 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		ActionComponent action = Mappers.Action.get(entity);
 		// If no action let AI pick action
 		while (action.action == null){
-			Gdx.app.log("TimeSystem", "Entity taking behavior step");
+
+			Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : taking behavior step");
 			BehaviorComponent behavior = Mappers.Behavior.get(entity);
 			behavior.behaviorTree.step();
 		}
+
+
 
 		// If has action perform it
 		// Currently always true since above loop
@@ -88,27 +91,13 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			// add time
 			TimeUnitComponent time = Mappers.Time.get(entity);
 			time.time = time.time.plus(action.timeInMiliSeconds, ChronoUnit.MILLIS);
+			Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
+
 			// reset action
 			action.action = null;
 			// reinsert in queue
 			queue.add(entity);
 		}
-
-		/*
-		ActionComponent actionComponent = actionMapper.get(queue.peek());
-		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
-
-		CURRENT_TIME = timeUnitComponent.time;
-
-		// Set custom time to simulate waiting
-		timeUnitComponent.time = timeUnitComponent.time.plus(5000, ChronoUnit.MILLIS);
-		//Re insert
-		Entity e = queue.poll();
-
-		queue.add(e);
-		Gdx.app.log("TimeSystem","Monster waited 500ms. Next action at: " + timeUnitComponent.time);
-
-		 */
 	}
 
 	private void processPlayerTurn()
@@ -129,7 +118,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 			player.remove(ActionComponent.class);
 
-			timeUnitComponent.time = timeUnitComponent.time.plus(2000, ChronoUnit.MILLIS);
+			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
 			// push into queue
 			queue.add(player);
 			playerComponent.playerTurn = false;
