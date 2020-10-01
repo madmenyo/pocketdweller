@@ -7,6 +7,7 @@ import com.badlogic.gdx.ai.btree.branch.Selector;
 import com.badlogic.gdx.ai.btree.branch.Sequence;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.buckriderstudio.pocketdweller.behavior.Behaviors;
+import com.buckriderstudio.pocketdweller.behavior.SeesHostileCondition;
 import com.buckriderstudio.pocketdweller.behavior.WanderTask;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
@@ -60,6 +61,7 @@ public class Mob extends Entity
 		selector.addChild(sequence);
 
 		WanderTask wanderTask = new WanderTask();
+		wanderTask.setGuard(new SeesHostileCondition());
 		sequence.addChild(wanderTask);
 
 

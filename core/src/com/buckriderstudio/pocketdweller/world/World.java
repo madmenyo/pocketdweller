@@ -12,6 +12,7 @@ import java.util.Set;
 
 import squidpony.squidai.DijkstraMap;
 import squidpony.squidgrid.FOV;
+import squidpony.squidgrid.LOS;
 import squidpony.squidgrid.Measurement;
 import squidpony.squidgrid.Radius;
 import squidpony.squidgrid.mapping.DungeonGenerator;
@@ -24,7 +25,7 @@ import squidpony.squidmath.Coord;
  */
 public class World implements EntityListener
 {
-    public static final int TILE_SIZE = 8;
+    public static final int TILE_SIZE = 16;
 
     private int width, height;
     public int getWidth() {
@@ -58,7 +59,7 @@ public class World implements EntityListener
 		return sentientEntities;
 	}
 
-	private AStarSearch aStarSearch;
+	private LOS los;
 
 	private FOV fieldOfView;
 	private double[][] resistanceMap;
@@ -83,7 +84,7 @@ public class World implements EntityListener
 	 */
 	private void updateMapChange()
 	{
-		aStarSearch = new AStarSearch(costMap, AStarSearch.SearchType.EUCLIDEAN);
+	    los = new LOS(LOS.BRESENHAM);
 
 		fieldOfView = new FOV(FOV.SHADOW);
 		resistanceMap = FOV.generateResistances(charMap);
@@ -167,4 +168,8 @@ public class World implements EntityListener
 	{
 		sentientEntities.remove(entity);
 	}
+
+    public boolean los(Coord from, Coord too) {
+        return los.isReachable(charMap, from.x, from.y, too.x, too.y);
+    }
 }

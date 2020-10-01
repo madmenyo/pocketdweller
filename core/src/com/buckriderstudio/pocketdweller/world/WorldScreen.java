@@ -48,7 +48,7 @@ public class WorldScreen extends ScreenAdapter {
         spriteBatch = new SpriteBatch();
         worldView = new WorldView();
 
-        world = new World(128, 128);
+        world = new World(32, 32);
 
         stage = new Stage(new ExtendViewport(1280, 720));
 
@@ -78,7 +78,7 @@ public class WorldScreen extends ScreenAdapter {
 
 		// Add some mobs
 		Behaviors behaviors = new Behaviors();
-        for (int i = 0; i < 60; i++)
+        for (int i = 0; i < 1; i++)
 		{
 			String name = "Mob[" + i + "]";
 			pooledEngine.addEntity(mobEntity(name, behaviors));

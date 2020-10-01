@@ -20,6 +20,7 @@ public class WanderTask extends LeafTask<Entity>
 	public Status execute()
 	{
 		Entity entity = getObject();
+		System.out.println("Wander task");
 
 
 		BehaviorComponent behavior = Mappers.Behavior.get(entity);

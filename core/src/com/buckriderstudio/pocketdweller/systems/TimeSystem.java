@@ -114,7 +114,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			// Pull out of queue
 			Entity player = queue.poll();
 			//perform
-			System.out.println("Performing action: " + actionComponent.action);
+			//System.out.println("Performing action: " + actionComponent.action);
 			actionComponent.action.perform(player, getEngine());
 
 			player.remove(ActionComponent.class);
@@ -124,7 +124,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			queue.add(player);
 			playerComponent.playerTurn = false;
 
-			Gdx.app.log("TimeSystem","Player acted " + actionComponent.timeInMiliSeconds + "ms. Next action at: " + timeUnitComponent.time);
+			//Gdx.app.log("TimeSystem","Player acted " + actionComponent.timeInMiliSeconds + "ms. Next action at: " + timeUnitComponent.time);
 		}
 		else
 		{

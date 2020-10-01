@@ -25,14 +25,12 @@ public class MoveAction extends Action {
 
         if (transformComponent == null) throw new NullPointerException("Cannot perform move action on Entity without TransformComponent");
 
-        //transformComponent.tilePosition = coord;
-        //transformComponent.worldPosition.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE, 0);
-
 		MoveComponent moveComponent = engine.createComponent(MoveComponent.class);
 		moveComponent.from.set(transformComponent.worldPosition.x, transformComponent.worldPosition.y);
 		moveComponent.too.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE);
 
 		transformComponent.tilePosition = coord;
+        //System.out.println("Coord moved to: " + coord);
 		entity.add(moveComponent);
     }
 }

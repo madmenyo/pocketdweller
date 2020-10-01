@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.InfoComponent;
+import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 
@@ -19,4 +20,5 @@ public class Mappers
 	public static final ComponentMapper<BehaviorComponent> Behavior = ComponentMapper.getFor(BehaviorComponent.class);
 	public static final ComponentMapper<ActionComponent> Action = ComponentMapper.getFor(ActionComponent.class);
 	public static final ComponentMapper<InfoComponent> Info = ComponentMapper.getFor(InfoComponent.class);
+	public static final ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
 }
