@@ -102,8 +102,7 @@ public class Controller
 		transfromComponent.tilePosition = destination;
 
 		ActionComponent actionComponent = new ActionComponent();
-		actionComponent.action = new MoveAction(100, destination);
-		actionComponent.timeInMiliSeconds = 100;
+		actionComponent.action = new MoveAction(destination);
 		player.add(actionComponent);
 	}
 }

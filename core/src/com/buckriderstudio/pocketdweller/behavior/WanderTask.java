@@ -21,7 +21,7 @@ public class WanderTask extends LeafTask<Entity>
 	{
 		Entity entity = getObject();
 		//System.out.println("Wander task. Guard: " + checkGuard(control));
-		if (!checkGuard(control)) return Status.FAILED;
+		//if (!checkGuard(control)) return Status.FAILED;
 
 
 		BehaviorComponent behavior = Mappers.Behavior.get(entity);
@@ -42,8 +42,7 @@ public class WanderTask extends LeafTask<Entity>
 			System.out.println("New path set: " + behavior.path.size());
 		}
 		// Get stats (or action uses stats to calculate stuff like speed)
-		action.action = new MoveAction(100, behavior.path.remove(0));
-		action.timeInMiliSeconds = 100;
+		action.action = new MoveAction(behavior.path.remove(0));
 
 		return Status.RUNNING;
 	}

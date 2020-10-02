@@ -13,13 +13,22 @@ public class MoveAction extends Action {
 
     private Coord coord;
 
-    public MoveAction(int time, Coord coord) {
-        super(time);
+    public MoveAction(Coord coord) {
+        super(700);
         this.coord = coord;
-
     }
 
-    @Override
+	@Override
+	public int getTime(Entity entity)
+	{
+		// Get entity speed
+		// Get entity injury or focus
+		// Get other stuff that influences move time
+
+		return time;
+	}
+
+	@Override
     public void perform(Entity entity, Engine engine) {
         TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
 

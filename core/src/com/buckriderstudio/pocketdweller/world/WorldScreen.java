@@ -4,7 +4,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,6 +17,8 @@ import com.buckriderstudio.pocketdweller.Controller;
 import com.buckriderstudio.pocketdweller.behavior.Behaviors;
 import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.entities.Mob;
+import com.buckriderstudio.pocketdweller.gui.Gui;
+import com.buckriderstudio.pocketdweller.utility.Assets;
 import com.buckriderstudio.pocketdweller.utility.DebugTable;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
@@ -39,20 +43,24 @@ public class WorldScreen extends ScreenAdapter {
 
     private World world;
 
-    private TextureAtlas atlas;
+    private AssetManager assetManager;
+    private TextureAtlas creatureAtlas;
 
     private Stage stage;
+    private Gui gui;
 
-    public WorldScreen() {
+    public WorldScreen(AssetManager assetManager) {
+    	this.assetManager = assetManager;
         pooledEngine = new PooledEngine();
         spriteBatch = new SpriteBatch();
         worldView = new WorldView();
 
         world = new World(32, 32);
 
+
         stage = new Stage(new ExtendViewport(1280, 720));
 
-        atlas = new TextureAtlas("tilesets/dungeon.atlas");
+        creatureAtlas = assetManager.get(Assets.CREATURES);
     }
 
 
@@ -84,10 +92,13 @@ public class WorldScreen extends ScreenAdapter {
 			pooledEngine.addEntity(mobEntity(name, behaviors));
 		}
 
-        // Set input
-        Gdx.input.setInputProcessor(controller.getInputMultiplexer());
+		gui = new Gui(timeSystem, assetManager);
 
-        stage.addActor(new DebugTable());
+		stage.addActor(new DebugTable());
+
+        // Set input
+        Gdx.input.setInputProcessor(new InputMultiplexer(gui, stage, controller.getInputMultiplexer()));
+
     }
 
 	/**
@@ -108,7 +119,7 @@ public class WorldScreen extends ScreenAdapter {
         player.add(transformComponent);
 
         TextureComponent textureComponent = pooledEngine.createComponent(TextureComponent.class);
-        textureComponent.region = atlas.findRegion("knight_idle_anim_f0");
+        textureComponent.region = creatureAtlas.findRegion("knight_idle_anim_f0");
         player.add(textureComponent);
 
         player.add(new PlayerComponent());
@@ -128,13 +139,14 @@ public class WorldScreen extends ScreenAdapter {
 			coord = Coord.get((int) (MathUtils.random() * world.getWidth()), (int) (MathUtils.random() * world.getHeight()));
 		}
 
-		return new Mob(name, coord, world, atlas.findRegion("goblin_idle_anim_f0"), pooledEngine, behaviors);
+		return new Mob(name, coord, world, creatureAtlas.findRegion("goblin_idle_anim_f0"), pooledEngine, behaviors);
 	}
 
 
     @Override
     public void render(float delta) {
-	    stage.act();
+	    stage.act(delta);
+	    gui.act(delta);
 
         Gdx.gl.glClearColor(.02f, .026f, .042f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -144,11 +156,15 @@ public class WorldScreen extends ScreenAdapter {
 
         stage.draw();
 
+		gui.draw();
+
+
     }
 
     @Override
     public void resize(int width, int height) {
         worldView.getViewport().update(width, height);
+        gui.resize(width, height, true);
     }
 
 }

@@ -9,7 +9,13 @@ public class WaitAction extends Action {
         super(time);
     }
 
-    @Override
+	@Override
+	public int getTime(Entity entity)
+	{
+		return time;
+	}
+
+	@Override
     public void perform(Entity entity, Engine engine) {
 
     }

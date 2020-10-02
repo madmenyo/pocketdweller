@@ -79,7 +79,7 @@ public class DesktopLauncher {
 		settings.flattenPaths = true;
 
 		String input = "../../images/gui";
-		String output = "sheets";
+		String output = "gui";
 		String filename = "gui.atlas";
 
 		TexturePacker.process(settings, input, output, filename);

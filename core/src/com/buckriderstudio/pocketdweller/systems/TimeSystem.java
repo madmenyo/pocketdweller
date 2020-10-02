@@ -82,23 +82,19 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			behavior.behaviorTree.step();
 		}
 
-
-
 		// If has action perform it
 		// Currently always true since above loop
-		if (action != null){
-			// Perform
-			action.action.perform(entity, getEngine());
-			// add time
-			TimeUnitComponent time = Mappers.Time.get(entity);
-			time.time = time.time.plus(action.timeInMiliSeconds, ChronoUnit.MILLIS);
-			//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
+		// Perform
+		action.action.perform(entity, getEngine());
+		// add time
+		TimeUnitComponent time = Mappers.Time.get(entity);
+		time.time = time.time.plus(action.action.getTime(entity), ChronoUnit.MILLIS);
+		//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
 
-			// reset action
-			action.action = null;
-			// reinsert in queue
-			queue.add(entity);
-		}
+		// reset action
+		action.action = null;
+		// reinsert in queue
+		queue.add(entity);
 	}
 
 	private void processPlayerTurn()
@@ -117,9 +113,9 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			//System.out.println("Performing action: " + actionComponent.action);
 			actionComponent.action.perform(player, getEngine());
 
+			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.action.getTime(player), ChronoUnit.MILLIS);
 			player.remove(ActionComponent.class);
 
-			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.timeInMiliSeconds, ChronoUnit.MILLIS);
 			// push into queue
 			queue.add(player);
 			playerComponent.playerTurn = false;
