@@ -21,7 +21,6 @@ import squidpony.squidmath.Coord;
 
 public class SeesHostileCondition extends LeafTask<Entity>
 {
-
 	@Override
 	public Status execute()
 	{
