@@ -25,7 +25,7 @@ import squidpony.squidmath.Coord;
  */
 public class World implements EntityListener
 {
-    public static final int TILE_SIZE = 16;
+    public static final int TILE_SIZE = 32;
 
     private int width, height;
     public int getWidth() {

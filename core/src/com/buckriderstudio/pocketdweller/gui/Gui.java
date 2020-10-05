@@ -3,9 +3,12 @@ package com.buckriderstudio.pocketdweller.gui;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
+import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
@@ -71,12 +74,15 @@ public class Gui extends Stage
 	private VisTable createTimeTable()
 	{
 		VisTable timeTable = new VisTable();
+		//timeTable.debugAll();
 		timeTable.left();
-		timeTable.add("Date: ");
+		//timeTable.add("Date: ");
+		timeTable.add(new Image(VisUI.getSkin(), "calendar")).size(24);
 		date = new VisLabel("");
 		timeTable.add(date).left();
 		timeTable.row();
-		timeTable.add("Time: ");
+		//timeTable.add("Time: ");
+		timeTable.add(new Image(VisUI.getSkin(), "stopwatch")).size(24);
 		time = new VisLabel("");
 		timeTable.add(time).left();
 		return timeTable;

@@ -61,7 +61,7 @@ public class Mob extends Entity
 		selector.addChild(sequence);
 
 		WanderTask wanderTask = new WanderTask();
-		wanderTask.setGuard(new SeesHostileCondition());
+		//wanderTask.setGuard(new SeesHostileCondition());
 		sequence.addChild(wanderTask);
 
 

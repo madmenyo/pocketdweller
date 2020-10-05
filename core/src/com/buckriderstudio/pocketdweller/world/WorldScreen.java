@@ -86,7 +86,7 @@ public class WorldScreen extends ScreenAdapter {
 
 		// Add some mobs
 		Behaviors behaviors = new Behaviors();
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 50; i++)
 		{
 			String name = "Mob[" + i + "]";
 			pooledEngine.addEntity(mobEntity(name, behaviors));
