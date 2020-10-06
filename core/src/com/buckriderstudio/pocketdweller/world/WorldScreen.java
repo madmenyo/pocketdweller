@@ -19,6 +19,7 @@ import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.entities.Mob;
 import com.buckriderstudio.pocketdweller.gui.Gui;
 import com.buckriderstudio.pocketdweller.utility.Assets;
+import com.buckriderstudio.pocketdweller.utility.DebugDraw;
 import com.buckriderstudio.pocketdweller.utility.DebugTable;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
@@ -28,6 +29,7 @@ import com.buckriderstudio.pocketdweller.systems.MoveSystem;
 import com.buckriderstudio.pocketdweller.systems.RenderSystem;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
 
+import squidpony.squidgrid.SoundMap;
 import squidpony.squidmath.Coord;
 
 /**
@@ -48,6 +50,10 @@ public class WorldScreen extends ScreenAdapter {
 
     private Stage stage;
     private Gui gui;
+    private DebugTable debugTable;
+    private DebugDraw debugDraw;
+
+    SoundMap soundMap;
 
     public WorldScreen(AssetManager assetManager) {
     	this.assetManager = assetManager;
@@ -72,7 +78,7 @@ public class WorldScreen extends ScreenAdapter {
 
     	// Add systems
         pooledEngine.addSystem(new RenderSystem(world, spriteBatch, worldView, player));
-        TimeSystem timeSystem = new TimeSystem();
+        TimeSystem timeSystem = new TimeSystem(world);
         pooledEngine.addSystem(timeSystem);
 
         pooledEngine.addSystem(new MoveSystem());
@@ -93,11 +99,26 @@ public class WorldScreen extends ScreenAdapter {
 		}
 
 		gui = new Gui(timeSystem, assetManager);
+        debugTable = new DebugTable(world);
+        debugDraw = new DebugDraw(worldView);
 
-		stage.addActor(new DebugTable());
+
+
+        stage.addActor(debugTable);
+		stage.addActor(new DebugTable(world));
 
         // Set input
         Gdx.input.setInputProcessor(new InputMultiplexer(gui, stage, controller.getInputMultiplexer()));
+
+
+        soundMap = new SoundMap(world.getCharMap());
+        Coord coord = Coord.get(-1, -1);
+        for (int i = 0; i < 5; i++){
+            while (world.blocksMovement(coord.x, coord.y)){
+                coord = Coord.get(MathUtils.random(world.getWidth()), MathUtils.random(world.getHeight()));
+            }
+            soundMap.setSound(coord, 5);
+        }
 
     }
 
@@ -157,6 +178,8 @@ public class WorldScreen extends ScreenAdapter {
         stage.draw();
 
 		gui.draw();
+
+		debugDraw.drawMap(soundMap.gradientMap);
 
 
     }

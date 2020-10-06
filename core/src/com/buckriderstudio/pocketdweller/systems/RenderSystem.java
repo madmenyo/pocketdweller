@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.buckriderstudio.pocketdweller.components.TextureComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
+import com.buckriderstudio.pocketdweller.world.SoundTest;
 import com.buckriderstudio.pocketdweller.world.World;
 import com.buckriderstudio.pocketdweller.world.WorldView;
 
@@ -27,7 +28,7 @@ public class RenderSystem extends IteratingSystem {
 
     private Entity player;
 
-    private boolean noFog = true;
+	private boolean noFog = true;
 
 
     public RenderSystem(World world, SpriteBatch batch, WorldView worldView, Entity player) {

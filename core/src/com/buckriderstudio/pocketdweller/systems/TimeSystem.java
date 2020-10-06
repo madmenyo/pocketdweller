@@ -7,13 +7,12 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
-import com.buckriderstudio.pocketdweller.actions.WaitAction;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
+import com.buckriderstudio.pocketdweller.world.World;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -44,10 +43,13 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 	private PriorityQueue<Entity> queue = new PriorityQueue<>(timeComparator);
 
+	private World world;
 
-	public TimeSystem()
+
+	public TimeSystem(World world)
 	{
 
+		this.world = world;
 	}
 
 	@Override
@@ -62,6 +64,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
+
 			processPlayerTurn();
 		} else { // Must be other
 			while (queue.peek().getComponent(PlayerComponent.class) == null)
@@ -81,6 +84,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			BehaviorComponent behavior = Mappers.Behavior.get(entity);
 			behavior.behaviorTree.step();
 		}
+
 
 		// If has action perform it
 		// Currently always true since above loop
@@ -107,6 +111,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		// If player has action perform it
 		if (queue.peek().getComponent(ActionComponent.class) != null)
 		{
+			world.resetFovTime();
 			// Pull out of queue
 			Entity player = queue.poll();
 			//perform

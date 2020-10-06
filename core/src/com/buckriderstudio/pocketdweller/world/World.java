@@ -25,7 +25,7 @@ import squidpony.squidmath.Coord;
  */
 public class World implements EntityListener
 {
-    public static final int TILE_SIZE = 32;
+    public static final int TILE_SIZE = 16;
 
     private int width, height;
     public int getWidth() {
@@ -62,7 +62,15 @@ public class World implements EntityListener
 	private LOS los;
 
 	private FOV fieldOfView;
-	private double[][] resistanceMap;
+	private long fovTime = 0;
+    public float getFovTime() {
+        return fovTime;
+    }
+    public void resetFovTime() {
+        fovTime = 0;
+    }
+
+    private double[][] resistanceMap;
 
 	private DijkstraMap dijkstraMap;
 
@@ -133,7 +141,7 @@ public class World implements EntityListener
 	 * @return
 	 */
 	public double[][] getLightMap(Coord coord, double radius){
-    	return fieldOfView.calculateFOV(resistanceMap, coord.x, coord.y, radius, Radius.CIRCLE);
+	    return fieldOfView.calculateFOV(resistanceMap, coord.x, coord.y, radius, Radius.CIRCLE);
 	}
 
     /**

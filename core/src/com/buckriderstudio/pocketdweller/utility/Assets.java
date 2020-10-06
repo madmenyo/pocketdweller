@@ -22,7 +22,7 @@ public class Assets
 	public static AssetDescriptor<TextureAtlas> TILES = new AssetDescriptor<TextureAtlas>("sheets/tilesheet.atlas", TextureAtlas.class);
 	public static AssetDescriptor<TextureAtlas> CREATURES = new AssetDescriptor<TextureAtlas>("sheets/creatures.atlas", TextureAtlas.class);
 	public static AssetDescriptor<TextureAtlas> OBJECTS = new AssetDescriptor<TextureAtlas>("sheets/objects.atlas", TextureAtlas.class);
-	public static AssetDescriptor<TextureAtlas> GUI_ELEMENTS = new AssetDescriptor<TextureAtlas>("sheets/gui.atlas", TextureAtlas.class);
+	//public static AssetDescriptor<TextureAtlas> GUI_ELEMENTS = new AssetDescriptor<TextureAtlas>("sheets/gui.atlas", TextureAtlas.class);
 
 	public static AssetDescriptor<Skin> SKIN_NEUTRALIZER = new AssetDescriptor<>(
 			"gui/neutralizer-ui.json",
@@ -34,7 +34,7 @@ public class Assets
 		assetManager.load(TILES);
 		assetManager.load(CREATURES);
 		assetManager.load(OBJECTS);
-		assetManager.load(GUI_ELEMENTS);
+		//assetManager.load(GUI_ELEMENTS);
 
 		assetManager.load(SKIN_NEUTRALIZER);
 	}

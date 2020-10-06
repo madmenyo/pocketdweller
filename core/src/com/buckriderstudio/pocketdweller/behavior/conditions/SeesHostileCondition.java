@@ -1,4 +1,4 @@
-package com.buckriderstudio.pocketdweller.behavior;
+package com.buckriderstudio.pocketdweller.behavior.conditions;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -8,11 +8,6 @@ import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
 import com.buckriderstudio.pocketdweller.world.World;
-
-import java.util.Collections;
-
-import squidpony.squidgrid.LOS;
-import squidpony.squidmath.Coord;
 
 /**
  * PocketDweller [2020]

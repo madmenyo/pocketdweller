@@ -9,10 +9,10 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		//packImages();
 
-		//PackCreatures();
-		//PackGui();
-		//PackObjects();
-		//PackTiles();
+		PackCreatures();
+		PackGui();
+		PackObjects();
+		PackTiles();
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = 1280;
