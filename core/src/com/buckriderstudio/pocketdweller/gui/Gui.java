@@ -61,11 +61,11 @@ public class Gui extends Stage
 
 		rightTable = new VisTable();
 		rightTable.setTouchable(Touchable.enabled);
-		rightTable.left();
+		rightTable.left().top();
 		rightTable.setBackground("button");
 		mainTable.add(rightTable).width(200).growY();
 
-		topTable.add(createTimeTable());
+		rightTable.add(createTimeTable());
 
 		addActor(mainTable);
 

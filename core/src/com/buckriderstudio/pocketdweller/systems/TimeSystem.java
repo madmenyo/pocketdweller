@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -38,7 +39,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 	private Comparator<Entity> timeComparator = Comparator.comparingLong(e -> {
 		TimeUnitComponent time = timeMapper.get(e);
-		return time == null ? 0 : time.time.toInstant().toEpochMilli();
+		return time == null ? 0 : time.actingTime.toInstant().toEpochMilli();
 	});
 
 	private PriorityQueue<Entity> queue = new PriorityQueue<>(timeComparator);
@@ -61,7 +62,10 @@ public class TimeSystem extends EntitySystem implements EntityListener
 	@Override
 	public void update(float deltaTime)
 	{
+		//Pick on time and reinsert when time is added
+		handleNext();
 
+		// Pick on custom action
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 
@@ -69,6 +73,33 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		} else { // Must be other
 			while (queue.peek().getComponent(PlayerComponent.class) == null)
 				processOther();
+		}
+	}
+
+	private void handleNext() {
+		if (queue.peek().getComponent(PlayerComponent.class) != null){
+			// TODO if player has behavior keep tickin it until acting time changed. This way player can do longer behavioral tasks
+
+			// as long as the players acting time is equal the player can act and rest must wait
+			if (CURRENT_TIME.isEqual(Mappers.Time.get(queue.peek()).actingTime)) return;
+			// Player must have acted, reinsert into tree
+			queue.add(queue.poll());
+		} else { // Must be other
+			while (queue.peek().getComponent(PlayerComponent.class) == null) {
+				// Get NPC
+				Entity npc = queue.poll();
+				// Set its acting time to current time, since it is his time to act
+				CURRENT_TIME = Mappers.Time.get(npc).actingTime;
+				// Get BT to tick it as long as a action is performed
+				BehaviorComponent bc = Mappers.Behavior.get(npc);
+				while (CURRENT_TIME.isEqual(Mappers.Time.get(npc).actingTime)){
+
+					System.out.println("Stepping behavior: \n" + CURRENT_TIME.format(DateTimeFormatter.ISO_TIME) + "\n" + Mappers.Time.get(npc).actingTime.format(DateTimeFormatter.ISO_TIME));
+					bc.behaviorTree.step();
+				}
+				// NPC must have acted, reinsert it to the queue
+				queue.add(npc);
+			}
 		}
 	}
 
@@ -92,7 +123,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		action.action.perform(entity, getEngine());
 		// add time
 		TimeUnitComponent time = Mappers.Time.get(entity);
-		time.time = time.time.plus(action.action.getTime(entity), ChronoUnit.MILLIS);
+		time.actingTime = time.actingTime.plus(action.action.getTime(entity), ChronoUnit.MILLIS);
 		//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
 
 		// reset action
@@ -106,7 +137,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		ActionComponent actionComponent = actionMapper.get(queue.peek());
 		TimeUnitComponent timeUnitComponent = timeMapper.get(queue.peek());
 		PlayerComponent playerComponent = queue.peek().getComponent(PlayerComponent.class);
-		CURRENT_TIME = timeUnitComponent.time;
+		CURRENT_TIME = timeUnitComponent.actingTime;
 
 		// If player has action perform it
 		if (queue.peek().getComponent(ActionComponent.class) != null)
@@ -118,7 +149,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			//System.out.println("Performing action: " + actionComponent.action);
 			actionComponent.action.perform(player, getEngine());
 
-			timeUnitComponent.time = timeUnitComponent.time.plus(actionComponent.action.getTime(player), ChronoUnit.MILLIS);
+			timeUnitComponent.actingTime = timeUnitComponent.actingTime.plus(actionComponent.action.getTime(player), ChronoUnit.MILLIS);
 			player.remove(ActionComponent.class);
 
 			// push into queue

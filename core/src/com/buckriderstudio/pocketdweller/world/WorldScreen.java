@@ -179,7 +179,7 @@ public class WorldScreen extends ScreenAdapter {
 
 		gui.draw();
 
-		debugDraw.drawMap(soundMap.gradientMap);
+		//debugDraw.drawMap(soundMap.gradientMap);
 
 
     }

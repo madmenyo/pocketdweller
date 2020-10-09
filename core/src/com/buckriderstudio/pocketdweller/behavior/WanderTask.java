@@ -7,8 +7,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.buckriderstudio.pocketdweller.actions.MoveAction;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
+import com.buckriderstudio.pocketdweller.components.MoveComponent;
 import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
+import com.buckriderstudio.pocketdweller.world.World;
+
+import java.time.temporal.ChronoUnit;
 
 import squidpony.squidmath.Coord;
 
@@ -42,9 +46,18 @@ public class WanderTask extends LeafTask<Entity>
 			System.out.println("New path set: " + behavior.path.size());
 		}
 		// Get stats (or action uses stats to calculate stuff like speed)
-		action.action = new MoveAction(behavior.path.remove(0));
+		Coord coord = behavior.path.remove(0);
+		System.out.println("Moving");
+		MoveComponent moveComponent = new MoveComponent();
 
-		return Status.RUNNING;
+		moveComponent.from.set(transform.worldPosition.x, transform.worldPosition.y);
+		moveComponent.too.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE);
+		transform.tilePosition = coord;
+
+		Mappers.Time.get(entity).actingTime = Mappers.Time.get(entity).actingTime.plus(7000, ChronoUnit.MILLIS);
+		//action.action = new MoveAction(behavior.path.remove(0));
+
+		return Status.SUCCEEDED;
 	}
 
 	@Override
