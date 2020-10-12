@@ -1,6 +1,6 @@
 package com.buckriderstudio.pocketdweller.utility;
 
-public class GameTime {
+public class GameTime implements Comparable<GameTime>{
     int milli;
     int seconds;
     int minutes;
@@ -44,5 +44,34 @@ public class GameTime {
     @Override
     public String toString() {
         return "GameTime{Day [" + days + "] " + hours + ":" + minutes + ":" + seconds + "'" + milli;
+    }
+
+    public long totalMiliseconds(){
+        return days * 24 + hours * 60 + minutes * 60 + seconds * 1000 + milli;
+    }
+
+    public boolean isEarlier(GameTime time){
+        if (totalMiliseconds() < time.totalMiliseconds()) return true;
+        return false;
+    }
+
+    @Override
+    public int compareTo(GameTime other) {
+        if (days < other.days) return -1;
+        if (days > other.days) return 1;
+
+        if (hours < other.hours) return -1;
+        if (hours > other.hours) return 1;
+
+        if (minutes < other.minutes) return -1;
+        if (minutes > other.minutes) return 1;
+
+        if (seconds < other.seconds) return -1;
+        if (seconds > other.seconds) return 1;
+
+        if (milli < other.milli) return -1;
+        if (milli > other.milli) return 1;
+
+        return 0;
     }
 }
