@@ -1,16 +1,38 @@
 package com.buckriderstudio.pocketdweller.utility;
 
 public class GameTime implements Comparable<GameTime>{
-    int milli;
-    int seconds;
-    int minutes;
-    int hours;
-    int days;
+    private int milli;
+    private int seconds;
+    private int minutes;
+    private int hours;
+    private int days;
 
     public GameTime() {
         days = 1;
+    }
 
+    public GameTime(int milli, int seconds, int minutes, int hours, int days) {
+        addMilli(milli);
+        addSeconds(seconds);
+        addMinutes(minutes);
+        addHours(hours);
+        addDays(days);
+    }
 
+    public GameTime(GameTime gameTime){
+        gameTime.milli = milli;
+        gameTime.seconds = seconds;
+        gameTime.minutes = minutes;
+        gameTime.hours = hours;
+        gameTime.days = days;
+    }
+
+    public void setTime(GameTime gameTime) {
+        gameTime.milli = milli;
+        gameTime.seconds = seconds;
+        gameTime.minutes = minutes;
+        gameTime.hours = hours;
+        gameTime.days = days;
     }
 
     public void addMilli(int milli){
