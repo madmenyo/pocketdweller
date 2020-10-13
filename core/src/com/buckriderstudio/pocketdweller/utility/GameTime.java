@@ -7,6 +7,26 @@ public class GameTime implements Comparable<GameTime>{
     private int hours;
     private int days;
 
+    public int getMilli() {
+        return milli;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
     public GameTime() {
         days = 1;
     }
@@ -95,5 +115,37 @@ public class GameTime implements Comparable<GameTime>{
         if (milli > other.milli) return 1;
 
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GameTime gameTime = (GameTime) o;
+
+        if (milli != gameTime.milli) return false;
+        if (seconds != gameTime.seconds) return false;
+        if (minutes != gameTime.minutes) return false;
+        if (hours != gameTime.hours) return false;
+        return days == gameTime.days;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = milli;
+        result = 31 * result + seconds;
+        result = 31 * result + minutes;
+        result = 31 * result + hours;
+        result = 31 * result + days;
+        return result;
+    }
+
+    public String getTimeString() {
+        return String.format("%02d:%02d:%02d:", hours, minutes, seconds);
+    }
+
+    public GameTime cpy() {
+        return new GameTime(this);
     }
 }

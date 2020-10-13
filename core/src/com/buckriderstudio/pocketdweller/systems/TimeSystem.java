@@ -11,6 +11,7 @@ import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.PlayerComponent;
 import com.buckriderstudio.pocketdweller.components.TimeUnitComponent;
+import com.buckriderstudio.pocketdweller.utility.GameTime;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
 import com.buckriderstudio.pocketdweller.world.World;
 
@@ -30,17 +31,20 @@ import java.util.PriorityQueue;
 
 public class TimeSystem extends EntitySystem implements EntityListener
 {
-	public static ZonedDateTime CURRENT_TIME = ZonedDateTime.of(LocalDateTime.of(2021, Month.APRIL, 1, 8, 0, 0), ZoneId.systemDefault());
+	public static GameTime CURRENT_TIME = new GameTime();
 	private ImmutableArray<Entity> entities;
 
 	private ComponentMapper<TimeUnitComponent> timeMapper = ComponentMapper.getFor(TimeUnitComponent.class);
 	private ComponentMapper<ActionComponent> actionMapper = ComponentMapper.getFor(ActionComponent.class);
 	private ComponentMapper<BehaviorComponent> behaviorMapper = ComponentMapper.getFor(BehaviorComponent.class);
 
+	/*
 	private Comparator<Entity> timeComparator = Comparator.comparingLong(e -> {
 		TimeUnitComponent time = timeMapper.get(e);
 		return time == null ? 0 : time.actingTime.toInstant().toEpochMilli();
-	});
+	});*/
+
+	private Comparator<Entity> timeComparator = (o1, o2) -> Mappers.Time.get(o1).actingTime.compareTo(Mappers.Time.get(o2).actingTime);
 
 	private PriorityQueue<Entity> queue = new PriorityQueue<>(timeComparator);
 
@@ -81,7 +85,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			// TODO if player has behavior keep tickin it until acting time changed. This way player can do longer behavioral tasks
 
 			// as long as the players acting time is equal the player can act and rest must wait
-			if (CURRENT_TIME.isEqual(Mappers.Time.get(queue.peek()).actingTime)) return;
+			if (CURRENT_TIME.equals(Mappers.Time.get(queue.peek()).actingTime)) return;
 			// Player must have acted, reinsert into tree
 			queue.add(queue.poll());
 		} else { // Must be other
@@ -89,12 +93,13 @@ public class TimeSystem extends EntitySystem implements EntityListener
 				// Get NPC
 				Entity npc = queue.poll();
 				// Set its acting time to current time, since it is his time to act
-				CURRENT_TIME = Mappers.Time.get(npc).actingTime;
+				CURRENT_TIME.setTime(Mappers.Time.get(npc).actingTime);
 				// Get BT to tick it as long as a action is performed
 				BehaviorComponent bc = Mappers.Behavior.get(npc);
-				while (CURRENT_TIME.isEqual(Mappers.Time.get(npc).actingTime)){
+				while (CURRENT_TIME.equals(Mappers.Time.get(npc).actingTime)){
+					System.out.println(CURRENT_TIME.getTimeString() + " : " + Mappers.Time.get(npc).actingTime.getTimeString());
 
-					System.out.println("Stepping behavior: \n" + CURRENT_TIME.format(DateTimeFormatter.ISO_TIME) + "\n" + Mappers.Time.get(npc).actingTime.format(DateTimeFormatter.ISO_TIME));
+					//System.out.println("Stepping behavior: \n" + CURRENT_TIME.format(DateTimeFormatter.ISO_TIME) + "\n" + Mappers.Time.get(npc).actingTime.format(DateTimeFormatter.ISO_TIME));
 					bc.behaviorTree.step();
 				}
 				// NPC must have acted, reinsert it to the queue
@@ -123,7 +128,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		action.action.perform(entity, getEngine());
 		// add time
 		TimeUnitComponent time = Mappers.Time.get(entity);
-		time.actingTime = time.actingTime.plus(action.action.getTime(entity), ChronoUnit.MILLIS);
+		time.actingTime.addMilli(action.action.getTime(entity)); //time.actingTime.plus(action.action.getTime(entity), ChronoUnit.MILLIS);
 		//Gdx.app.log("TimeSystem", Mappers.Info.get(entity).name + " : action completed. Time added " + action.timeInMiliSeconds);
 
 		// reset action
@@ -149,7 +154,8 @@ public class TimeSystem extends EntitySystem implements EntityListener
 			//System.out.println("Performing action: " + actionComponent.action);
 			actionComponent.action.perform(player, getEngine());
 
-			timeUnitComponent.actingTime = timeUnitComponent.actingTime.plus(actionComponent.action.getTime(player), ChronoUnit.MILLIS);
+			//timeUnitComponent.actingTime = timeUnitComponent.actingTime.plus(actionComponent.action.getTime(player), ChronoUnit.MILLIS);
+			timeUnitComponent.actingTime.addMilli(actionComponent.action.getTime(player));
 			player.remove(ActionComponent.class);
 
 			// push into queue

@@ -3,6 +3,7 @@ package com.buckriderstudio.pocketdweller.components;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
+import com.buckriderstudio.pocketdweller.utility.GameTime;
 
 import java.time.ZonedDateTime;
 
@@ -13,11 +14,11 @@ import java.time.ZonedDateTime;
 
 public class TimeUnitComponent implements Component, Pool.Poolable
 {
-	public ZonedDateTime actingTime = TimeSystem.CURRENT_TIME;
+	public GameTime actingTime = new GameTime(TimeSystem.CURRENT_TIME);
 
 	@Override
 	public void reset()
 	{
-		actingTime = TimeSystem.CURRENT_TIME;
+		actingTime = new GameTime(TimeSystem.CURRENT_TIME);
 	}
 }

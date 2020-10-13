@@ -16,7 +16,7 @@ public class WaitAction extends ActionTask {
 
     @Override
     public Status execute() {
-        Mappers.Time.get(getObject()).actingTime.plus(baseTime, ChronoUnit.MILLIS);
+        //Mappers.Time.get(getObject()).actingTime.plus(baseTime, ChronoUnit.MILLIS);
         addTimeToEntity();
         return Status.SUCCEEDED;
 

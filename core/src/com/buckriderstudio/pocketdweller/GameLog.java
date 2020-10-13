@@ -2,8 +2,8 @@ package com.buckriderstudio.pocketdweller;
 
 import com.badlogic.gdx.graphics.Color;
 import com.buckriderstudio.pocketdweller.systems.TimeSystem;
+import com.buckriderstudio.pocketdweller.utility.GameTime;
 
-import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,21 +18,21 @@ public class GameLog {
     public static class Message{
         public Color color;
         public String message;
-        public ZonedDateTime dateTime;
+        public GameTime gameTime;
 
         public Message() {
         }
 
         public Message(Color color, String message) {
-            dateTime = TimeSystem.CURRENT_TIME;
+            gameTime = TimeSystem.CURRENT_TIME;
             this.color = color;
             this.message = message;
         }
 
-        public Message(Color color, String message, ZonedDateTime dateTime) {
+        public Message(Color color, String message, GameTime gameTime) {
             this.color = color;
             this.message = message;
-            this.dateTime = dateTime;
+            this.gameTime = gameTime;
         }
     }
 }

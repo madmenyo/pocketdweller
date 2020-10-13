@@ -92,8 +92,8 @@ public class Gui extends Stage
 	public void act(float delta)
 	{
 		super.act(delta);
-		time.setText(TimeSystem.CURRENT_TIME.format(timeFormatter));
-		date.setText(TimeSystem.CURRENT_TIME.format(dateFormatter));
+		time.setText(TimeSystem.CURRENT_TIME.getTimeString());
+		date.setText(TimeSystem.CURRENT_TIME.getDays());
 	}
 
 	public void resize(int width, int height, boolean center){

@@ -12,8 +12,9 @@ public abstract class ActionTask extends LeafTask<Entity> {
     protected int baseTime;
 
     protected void addTimeToEntity(){
+        //System.out.println("adding time: " + baseTime);
         TimeUnitComponent tu = Mappers.Time.get(getObject());
-        tu.actingTime = tu.actingTime.plus(baseTime, ChronoUnit.MILLIS);
+        tu.actingTime.addMilli(baseTime);
     }
 
 
