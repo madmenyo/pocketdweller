@@ -97,7 +97,6 @@ public class TimeSystem extends EntitySystem implements EntityListener
 				// Get BT to tick it as long as a action is performed
 				BehaviorComponent bc = Mappers.Behavior.get(npc);
 				while (CURRENT_TIME.equals(Mappers.Time.get(npc).actingTime)){
-					System.out.println(CURRENT_TIME.getTimeString() + " : " + Mappers.Time.get(npc).actingTime.getTimeString());
 
 					//System.out.println("Stepping behavior: \n" + CURRENT_TIME.format(DateTimeFormatter.ISO_TIME) + "\n" + Mappers.Time.get(npc).actingTime.format(DateTimeFormatter.ISO_TIME));
 					bc.behaviorTree.step();
