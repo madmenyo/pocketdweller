@@ -21,4 +21,5 @@ public class BehaviorComponent implements Component
     public World world;
     public List<Coord> path;
     public AStarSearch aStarSearch;
+    public Entity target;
 }

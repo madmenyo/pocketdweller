@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 
 
 public abstract class ActionTask extends LeafTask<Entity> {
-    protected int baseTime;
+    protected int baseTime = 1000;
 
     protected void addTimeToEntity(){
         //System.out.println("adding time: " + baseTime);

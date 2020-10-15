@@ -1,11 +1,8 @@
-package com.buckriderstudio.pocketdweller.behavior;
+package com.buckriderstudio.pocketdweller.behavior.actions;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.ai.btree.LeafTask;
 import com.badlogic.gdx.ai.btree.Task;
 import com.badlogic.gdx.math.MathUtils;
-import com.buckriderstudio.pocketdweller.actions.MoveAction;
-import com.buckriderstudio.pocketdweller.behavior.actions.ActionTask;
 import com.buckriderstudio.pocketdweller.components.ActionComponent;
 import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.MoveComponent;
@@ -13,15 +10,13 @@ import com.buckriderstudio.pocketdweller.components.TransformComponent;
 import com.buckriderstudio.pocketdweller.utility.Mappers;
 import com.buckriderstudio.pocketdweller.world.World;
 
-import java.time.temporal.ChronoUnit;
-
 import squidpony.squidmath.Coord;
 
 
-public class WanderTask extends ActionTask
+public class WanderAction extends ActionTask
 {
 
-	public WanderTask() {
+	public WanderAction() {
 		baseTime = 100;
 	}
 
@@ -59,6 +54,8 @@ public class WanderTask extends ActionTask
 		moveComponent.too.set(coord.x * World.TILE_SIZE, coord.y * World.TILE_SIZE);
 		transform.tilePosition = coord;
 
+		entity.add(moveComponent);
+
 		//Mappers.Time.get(entity).actingTime = Mappers.Time.get(entity).actingTime.plus(7000, ChronoUnit.MILLIS);
 		addTimeToEntity();
 		//action.action = new MoveAction(behavior.path.remove(0));
@@ -69,6 +66,6 @@ public class WanderTask extends ActionTask
 	@Override
 	protected Task copyTo(Task task)
 	{
-		return new WanderTask();
+		return new WanderAction();
 	}
 }

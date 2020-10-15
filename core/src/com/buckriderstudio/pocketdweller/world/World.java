@@ -73,8 +73,11 @@ public class World implements EntityListener
     private double[][] resistanceMap;
 
 	private DijkstraMap dijkstraMap;
+    public DijkstraMap getDijkstraMap() {
+        return dijkstraMap;
+    }
 
-	public World(int width, int height) {
+    public World(int width, int height) {
         this.width = width;
         this.height = height;
 
