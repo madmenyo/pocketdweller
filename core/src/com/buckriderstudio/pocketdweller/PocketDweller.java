@@ -1,10 +1,18 @@
 package com.buckriderstudio.pocketdweller;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.btree.BehaviorTree;
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser;
+import com.badlogic.gdx.utils.StreamUtils;
+import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.utility.Assets;
 import com.buckriderstudio.pocketdweller.utility.GameTime;
 import com.buckriderstudio.pocketdweller.world.WorldScreen;
 import com.kotcrab.vis.ui.VisUI;
+
+import java.io.Reader;
 
 public class PocketDweller extends Game {
 
@@ -12,6 +20,26 @@ public class PocketDweller extends Game {
 	@Override
 	public void create () {
 
+		Entity entity = new Entity();
+		InfoComponent infoComponent = new InfoComponent();
+		infoComponent.name = "player";
+		entity.add(infoComponent);
+
+		BehaviorTree<Entity> tree = null;
+
+		Reader reader = null;
+		try {
+			reader = Gdx.files.internal("behavior/test_behavior.tree").reader();
+			BehaviorTreeParser<Entity> parser = new BehaviorTreeParser<Entity>(BehaviorTreeParser.DEBUG_HIGH);
+			tree = parser.parse(reader, entity);
+			System.out.println("Finished parsing tree...");
+		} finally {
+			StreamUtils.closeQuietly(reader);
+		}
+
+		tree.step();
+
+		/*
 		Assets assets = new Assets();
 		assets.loadAll();
 		assets.getAssetManager().finishLoading();
@@ -27,5 +55,7 @@ public class PocketDweller extends Game {
 		VisUI.load(assets.getAssetManager().get(Assets.SKIN_NEUTRALIZER));
 
 		setScreen(new WorldScreen(assets.getAssetManager()));
+
+		 */
 	}
 }

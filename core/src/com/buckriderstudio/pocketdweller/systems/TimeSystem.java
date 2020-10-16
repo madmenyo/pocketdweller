@@ -73,7 +73,7 @@ public class TimeSystem extends EntitySystem implements EntityListener
 		// If player controlled
 		if (queue.peek().getComponent(PlayerComponent.class) != null){
 
-			processPlayerTurn();
+			//processPlayerTurn();
 		} else { // Must be other
 			while (queue.peek().getComponent(PlayerComponent.class) == null)
 				processOther();
@@ -81,12 +81,20 @@ public class TimeSystem extends EntitySystem implements EntityListener
 	}
 
 	private void handleNext() {
-		if (queue.peek().getComponent(PlayerComponent.class) != null){
+		PlayerComponent pc = Mappers.player.get(queue.peek());
+		if (pc != null){
 			// TODO if player has behavior keep tickin it until acting time changed. This way player can do longer behavioral tasks
+			// Behavior should be set in controls
+			// Tick behavior just like others
+			BehaviorComponent bc = Mappers.Behavior.get(queue.peek());
 
 			// as long as the players acting time is equal the player can act and rest must wait
-			if (CURRENT_TIME.equals(Mappers.Time.get(queue.peek()).actingTime)) return;
+			if (CURRENT_TIME.equals(Mappers.Time.get(queue.peek()).actingTime)) {
+				pc.playerTurn = true;
+				return;
+			}
 			// Player must have acted, reinsert into tree
+			pc.playerTurn = false;
 			queue.add(queue.poll());
 		} else { // Must be other
 			while (queue.peek().getComponent(PlayerComponent.class) == null) {
@@ -145,8 +153,8 @@ public class TimeSystem extends EntitySystem implements EntityListener
 
 		// If player has action perform it
 		if (queue.peek().getComponent(ActionComponent.class) != null)
+		//if(CURRENT_TIME.)
 		{
-			world.resetFovTime();
 			// Pull out of queue
 			Entity player = queue.poll();
 			//perform

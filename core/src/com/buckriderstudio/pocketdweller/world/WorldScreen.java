@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.buckriderstudio.pocketdweller.Controller;
 import com.buckriderstudio.pocketdweller.behavior.Behaviors;
+import com.buckriderstudio.pocketdweller.components.BehaviorComponent;
 import com.buckriderstudio.pocketdweller.components.InfoComponent;
 import com.buckriderstudio.pocketdweller.entities.Mob;
 import com.buckriderstudio.pocketdweller.gui.Gui;
@@ -149,6 +150,10 @@ public class WorldScreen extends ScreenAdapter {
         InfoComponent infoComponent = pooledEngine.createComponent(InfoComponent.class);
         infoComponent.name = "Player";
         player.add(infoComponent);
+
+        BehaviorComponent behaviorComponent = pooledEngine.createComponent(BehaviorComponent.class);
+        behaviorComponent.world = world;
+        // set behavior in controls
 
         return player;
     }

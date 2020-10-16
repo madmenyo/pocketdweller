@@ -48,4 +48,10 @@ public class Behaviors
 		BehaviorTree<Entity> actualBehavior = new BehaviorTree<>(Mob.wanderingMobBehavior());
 		library.registerArchetypeTree("entity.actual", actualBehavior);
 	}
+
+	private void registerTestSequence(){
+
+	}
+
+
 }
