@@ -14,12 +14,51 @@ import com.kotcrab.vis.ui.VisUI;
 
 import java.io.Reader;
 
+import squidpony.FakeLanguageGen;
+import squidpony.WeightedLetterNamegen;
+
 public class PocketDweller extends Game {
 
 	
 	@Override
 	public void create () {
 
+		//behaviorTest();
+		//stringGenTest();
+
+
+		Assets assets = new Assets();
+		assets.loadAll();
+		assets.getAssetManager().finishLoading();
+
+		GameTime gameTime = new GameTime();
+		gameTime.addSeconds(3600);
+		System.out.println(gameTime.toString());
+		gameTime.addMilli(237248327);
+		System.out.println(gameTime.toString());
+
+
+
+		VisUI.load(assets.getAssetManager().get(Assets.SKIN_NEUTRALIZER));
+
+		setScreen(new WorldScreen(assets.getAssetManager()));
+
+
+	}
+
+	private void stringGenTest()
+	{
+		WeightedLetterNamegen nameGen = new WeightedLetterNamegen(WeightedLetterNamegen.COMMON_USA_LAST_NAMES);
+		for (int i = 0; i < 10; i++){
+			System.out.println(nameGen.generate());
+		}
+
+		FakeLanguageGen language = new FakeLanguageGen();
+		System.out.println(language.sentence(40, 50));
+	}
+
+	private void behaviorTest()
+	{
 		Entity entity = new Entity();
 		InfoComponent infoComponent = new InfoComponent();
 		infoComponent.name = "player";
@@ -38,24 +77,5 @@ public class PocketDweller extends Game {
 		}
 
 		tree.step();
-
-		/*
-		Assets assets = new Assets();
-		assets.loadAll();
-		assets.getAssetManager().finishLoading();
-
-		GameTime gameTime = new GameTime();
-		gameTime.addSeconds(3600);
-		System.out.println(gameTime.toString());
-		gameTime.addMilli(237248327);
-		System.out.println(gameTime.toString());
-
-
-
-		VisUI.load(assets.getAssetManager().get(Assets.SKIN_NEUTRALIZER));
-
-		setScreen(new WorldScreen(assets.getAssetManager()));
-
-		 */
 	}
 }

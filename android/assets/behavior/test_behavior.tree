@@ -1,0 +1,11 @@
+import test1:"com.buckriderstudio.pocketdweller.behavior.tests.Test1Behavior"
+import test2:"com.buckriderstudio.pocketdweller.behavior.tests.Test2Behavior"
+
+root
+    selector
+        sequence
+            test1
+            test2
+        sequence
+            test2
+            test1
